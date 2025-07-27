@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="180" height="40" viewBox="0 0 180 40" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1d4ed8"/>
+      <stop offset="100%" style="stop-color:#3b82f6"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Icon -->
+  <g transform="translate(2, 2)">
+    <!-- Clean circular background -->
+    <circle cx="18" cy="18" r="18" fill="url(#logoGrad)"/>
+    
+    <!-- Simple "E" + connection -->
+    <g transform="translate(9, 9)">
+      <!-- "E" letterform -->
+      <rect x="2" y="2" width="2" height="14" fill="white"/>
+      <rect x="2" y="2" width="10" height="2" fill="white"/>
+      <rect x="2" y="8" width="8" height="2" fill="white"/>
+      <rect x="2" y="14" width="10" height="2" fill="white"/>
+      
+      <!-- Connection dots -->
+      <circle cx="14" cy="4" r="1.2" fill="white"/>
+      <circle cx="14" cy="9" r="1.2" fill="white"/>
+      <circle cx="14" cy="14" r="1.2" fill="white"/>
+      
+      <!-- Connection lines -->
+      <rect x="12" y="3.5" width="2" height="0.8" fill="white"/>
+      <rect x="10" y="8.5" width="4" height="0.8" fill="white"/>
+      <rect x="12" y="13.5" width="2" height="0.8" fill="white"/>
+    </g>
+  </g>
+  
+  <!-- Text -->
+  <text x="45" y="16" font-family="Inter, -apple-system, sans-serif" font-size="14" font-weight="700" fill="#1e293b">
+    edu matrix
+  </text>
+  <text x="45" y="28" font-family="Inter, -apple-system, sans-serif" font-size="8" font-weight="500" fill="#64748b" letter-spacing="0.5px">
+    INTERLINKED
+  </text>
+</svg>

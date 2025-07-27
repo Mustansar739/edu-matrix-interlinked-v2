@@ -1,0 +1,23 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false
+  },
+  "include": [
+    "app/api/messages/**/*.ts",
+    "lib/cache.ts",
+    "lib/kafka.ts",
+    "lib/redis.ts",
+    "lib/prisma.ts",
+    "lib/auth.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    ".next",
+    "out"
+  ]
+}

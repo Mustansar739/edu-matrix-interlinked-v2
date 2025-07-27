@@ -1,0 +1,23 @@
+{
+  "name": "Edu Matrix Interlinked",
+  "short_name": "Edu Matrix",
+  "description": "Comprehensive educational platform with multi-tenant support",
+  "start_url": "/",
+  "display": "standalone",
+  "theme_color": "#1d4ed8",
+  "background_color": "#ffffff",
+  "icons": [
+    {
+      "src": "/logo-icon.svg",
+      "sizes": "64x64",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/logo-edu-matrix.svg",
+      "sizes": "180x40",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

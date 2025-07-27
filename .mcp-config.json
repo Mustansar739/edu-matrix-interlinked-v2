@@ -1,0 +1,24 @@
+{
+  "mcpServers": {
+    "playwright": {
+      "command": "npx",
+      "args": [
+        "@playwright/mcp"
+      ],
+      "env": {
+        "PLAYWRIGHT_BROWSERS_PATH": "0",
+        "PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD": "1",
+        "BROWSER_EXECUTABLE_PATH": "chrome"
+      }
+    }
+  },
+  "remoteConfig": {
+    "devServerUrl": "http://localhost:3000",
+    "tunnelPorts": [
+      3000,
+      8080,
+      9000
+    ],
+    "useLocalBrowser": true
+  }
+}

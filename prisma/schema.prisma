@@ -1,0 +1,4746 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["multiSchema"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  schemas  = ["auth_schema", "community_schema", "courses_schema", "edu_matrix_hub_schema", "feedback_schema", "freelancing_schema", "jobs_schema", "messages_schema", "news_schema", "notifications_schema", "rating_schema", "social_schema", "statistics_schema"]
+}
+
+model User {
+  id                        String                    @id @default(uuid())
+  email                     String                    @unique
+  username                  String                    @unique
+  password                  String?
+  name                      String
+  profession                UserProfession            @default(OTHER)
+  isVerified                Boolean                   @default(false)
+  lastLogin                 DateTime?
+  avatar                    String?
+  bio                       String?
+  institutionId             String?
+  departmentId              String?
+  studentId                 String?
+  employeeId                String?
+  major                     String?
+  academicYear              String?
+  phoneNumber               String?                   @db.VarChar(20)
+  dateOfBirth               DateTime?
+  address                   String?
+  emergencyContact          String?
+  permissions               String[]
+  dashboardPreferences      Json?
+  accessLevel               AccessLevel               @default(BASIC)
+  dataScope                 DataScopeType             @default(SELF)
+  canCreateCourses          Boolean                   @default(false)
+  canManageGrades           Boolean                   @default(false)
+  canViewAnalytics          Boolean                   @default(false)
+  canManageUsers            Boolean                   @default(false)
+  canAccessReports          Boolean                   @default(false)
+  canModerateContent        Boolean                   @default(false)
+  emailVerificationToken    String?
+  emailVerificationExpires  DateTime?
+  otpToken                  String?                   @db.VarChar(6)
+  otpExpires                DateTime?
+  otpAttempts               Int                       @default(0) @db.SmallInt
+  otpLastRequest            DateTime?
+  passwordResetToken        String?
+  passwordResetExpires      DateTime?
+  twoFactorEnabled          Boolean                   @default(false)
+  twoFactorSecret           String?
+  twoFactorBackupCodes      String[]
+  loginCount                Int                       @default(0)
+  lastFailedLogin           DateTime?
+  failedAttempts            Int                       @default(0) @db.SmallInt
+  lockedUntil               DateTime?
+  lastActivity              DateTime?
+  loginAttempts             Int                       @default(0) @db.SmallInt
+  lastLoginAttempt          DateTime?
+  professionalSummary       String?
+  headline                  String?
+  currentPosition           String?
+  currentCompany            String?
+  careerGoalsShort          String?
+  websiteUrl                String?
+  city                      String?
+  country                   String?
+  totalExperience           Int?
+  keySkills                 String[]
+  languages                 String[]
+  resumeSlug                String?                   @unique
+  isResumePublic            Boolean                   @default(false)
+  resumeViews               Int                       @default(0)
+  lastResumeView            DateTime?
+  resumeTemplate            String?                   @default("default")
+  showContactInfo           Boolean                   @default(true)
+  showProfilePicture        Boolean                   @default(true)
+  openToWork                Boolean                   @default(false)
+  preferredWorkType         String?
+  expectedSalary            String?
+  availableFrom             DateTime?
+  firstName                 String?
+  lastName                  String?
+  coverPhotoUrl             String?
+  profilePictureUrl         String?
+  location                  String?
+  website                   String?
+  twitterUrl                String?
+  profileVisibility         ProfileVisibility         @default(PUBLIC)
+  skills                    Json?
+  jobPreferences            Json?
+  profileCompleteness       Int?                      @default(0)
+  endorsementsCount         Int                       @default(0)
+  totalLikesReceived        Int                       @default(0)
+  profileViewsCount         Int                       @default(0)
+  searchAppearances         Int                       @default(0)
+  lastProfileView           DateTime?
+  createdBy                 String?
+  modifiedBy                String?
+  deletedAt                 DateTime?
+  deletedBy                 String?
+  createdAt                 DateTime                  @default(now())
+  updatedAt                 DateTime                  @updatedAt
+  followersCount            Int                       @default(0)
+  followingCount            Int                       @default(0)
+  sharingCount              Int                       @default(0)
+  accounts                  Account[]
+  achievements              Achievement[]
+  auditLogs                 AuditLog[]
+  certifications            Certification[]
+  classMemberships          ClassMember[]
+  departmentMemberships     DepartmentMember[]
+  educations                Education[]
+  emailVerifications        EmailVerification[]
+  institutionMemberships    InstitutionMember[]       @relation("InstitutionMember")
+  likeNotificationsGiven    LikeNotification[]        @relation("LikeNotificationsGiven")
+  likeNotificationsReceived LikeNotification[]        @relation("LikeNotificationsReceived")
+  passwordResets            PasswordReset[]
+  profileShares             ProfileShare[]            @relation("ProfileShares")
+  profileSharesGiven        ProfileShare[]            @relation("ProfileSharesGiven")
+  profileViews              ProfileView[]             @relation("ProfileOwner")
+  viewedProfiles            ProfileView[]             @relation("ProfileViewer")
+  projects                  Project[]
+  sessions                  Session[]
+  studentEnrollments        StudentEnrollment[]
+  teachingAssignments       TeachingAssignment[]
+  likesGiven                UniversalLike[]           @relation("LikesGiven")
+  likesReceived             UniversalLike[]           @relation("LikesReceived")
+  likeStats                 UserLikeStats?            @relation("LikeStats")
+  workExperiences           WorkExperience[]
+  conversationParticipants  ConversationParticipant[]
+  sentMessages              Message[]                 @relation("MessageSender")
+  followers                 Follow[]                  @relation("UserFollowers")
+  following                 Follow[]                  @relation("UserFollowing")
+  stories                   Story[]                   @relation("UserStories")
+  storyReactions            StoryReaction[]           @relation("UserStoryReactions")
+  storyViews                StoryView[]               @relation("UserStoryViews")
+  fileUploads               FileUpload[]              @relation("UserFileUploads")
+
+  @@index([profession, isVerified])
+  @@index([institutionId, profession])
+  @@index([departmentId, profession])
+  @@index([lastLogin, isVerified])
+  @@index([email, isVerified])
+  @@index([username, profession])
+  @@index([accessLevel, dataScope])
+  @@index([createdAt, profession])
+  @@index([updatedAt, isVerified])
+  @@index([studentId, institutionId])
+  @@index([employeeId, institutionId])
+  @@index([followersCount, isVerified])
+  @@index([followingCount, isVerified])
+  @@index([profileVisibility, isVerified])
+  @@index([lastActivity, isVerified])
+  @@index([createdAt])
+  @@index([updatedAt])
+  @@schema("auth_schema")
+}
+
+model WorkExperience {
+  id           String    @id @default(uuid())
+  userId       String
+  company      String
+  position     String
+  location     String?
+  startDate    DateTime
+  endDate      DateTime?
+  isCurrentJob Boolean   @default(false)
+  description  String?
+  achievements String[]
+  skills       String[]
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, startDate])
+  @@schema("auth_schema")
+}
+
+model Education {
+  id           String   @id @default(uuid())
+  userId       String
+  institution  String?
+  degree       String?
+  fieldOfStudy String?
+  startYear    Int?
+  endYear      Int?
+  gpa          String?
+  grade        String?
+  activities   String[]
+  achievements String[]
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@schema("auth_schema")
+}
+
+model Project {
+  id            String    @id @default(uuid())
+  userId        String
+  title         String
+  description   String
+  technologies  String[]
+  category      String?
+  liveUrl       String?
+  repositoryUrl String?
+  imageUrls     String[]
+  startDate     DateTime
+  endDate       DateTime?
+  isOngoing     Boolean   @default(false)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, startDate])
+  @@schema("auth_schema")
+}
+
+model Certification {
+  id            String    @id @default(uuid())
+  userId        String
+  name          String?
+  issuer        String?
+  issueDate     DateTime?
+  expiryDate    DateTime?
+  credentialId  String?
+  credentialUrl String?
+  skills        String[]
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, issueDate])
+  @@schema("auth_schema")
+}
+
+model Achievement {
+  id          String   @id @default(uuid())
+  userId      String
+  title       String
+  description String
+  category    String?
+  date        DateTime
+  imageUrl    String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, date])
+  @@schema("auth_schema")
+}
+
+model ProfileView {
+  id        String   @id @default(uuid())
+  viewerId  String
+  profileId String
+  viewedAt  DateTime @default(now())
+  viewType  String   @default("profile")
+  ipAddress String?
+  userAgent String?
+  profile   User     @relation("ProfileOwner", fields: [profileId], references: [id], onDelete: Cascade)
+  viewer    User     @relation("ProfileViewer", fields: [viewerId], references: [id], onDelete: Cascade)
+
+  @@unique([viewerId, profileId, viewedAt])
+  @@index([profileId, viewedAt])
+  @@index([viewerId, viewedAt])
+  @@schema("auth_schema")
+}
+
+model ProfileShare {
+  id          String   @id @default(uuid())
+  profileId   String
+  sharerId    String?
+  platform    String
+  shareUrl    String
+  message     String?
+  utmSource   String?
+  utmMedium   String?
+  utmCampaign String?
+  metadata    Json?
+  ipAddress   String?
+  userAgent   String?
+  createdAt   DateTime @default(now())
+  profile     User     @relation("ProfileShares", fields: [profileId], references: [id], onDelete: Cascade)
+  sharer      User?    @relation("ProfileSharesGiven", fields: [sharerId], references: [id])
+
+  @@index([profileId, createdAt])
+  @@index([sharerId, createdAt])
+  @@index([platform, createdAt])
+  @@index([profileId, platform])
+  @@schema("auth_schema")
+}
+
+model UniversalLike {
+  id          String   @id @default(uuid())
+  likerId     String
+  recipientId String
+  contentType String
+  contentId   String
+  schemaName  String
+  metadata    Json?
+  createdAt   DateTime @default(now())
+  liker       User     @relation("LikesGiven", fields: [likerId], references: [id], onDelete: Cascade)
+  recipient   User     @relation("LikesReceived", fields: [recipientId], references: [id], onDelete: Cascade)
+
+  @@unique([likerId, contentType, contentId])
+  @@index([recipientId, createdAt])
+  @@index([contentType, contentId])
+  @@index([likerId, createdAt])
+  @@index([recipientId])
+  @@schema("auth_schema")
+}
+
+model UserLikeStats {
+  userId       String   @id
+  totalLikes   Int      @default(0)
+  likesByType  Json     @default("{}")
+  lastUpdated  DateTime @default(now())
+  monthlyStats Json?    @default("{}")
+  user         User     @relation("LikeStats", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([totalLikes])
+  @@index([lastUpdated])
+  @@schema("auth_schema")
+}
+
+model LikeNotification {
+  id          String   @id @default(uuid())
+  recipientId String
+  likerId     String
+  contentType String
+  contentId   String
+  isRead      Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  liker       User     @relation("LikeNotificationsGiven", fields: [likerId], references: [id], onDelete: Cascade)
+  recipient   User     @relation("LikeNotificationsReceived", fields: [recipientId], references: [id], onDelete: Cascade)
+
+  @@index([recipientId, isRead, createdAt])
+  @@index([recipientId, createdAt])
+  @@schema("auth_schema")
+}
+
+model InstitutionMember {
+  id            String              @id @default(uuid())
+  userId        String
+  institutionId String
+  role          InstitutionRoleType @default(MEMBER)
+  permissions   String[]
+  joinedAt      DateTime            @default(now())
+  isActive      Boolean             @default(true)
+  user          User                @relation("InstitutionMember", fields: [userId], references: [id])
+
+  @@unique([userId, institutionId])
+  @@index([institutionId, role])
+  @@index([userId, isActive])
+  @@index([role, isActive])
+  @@index([joinedAt, isActive])
+  @@schema("auth_schema")
+}
+
+model DepartmentMember {
+  id           String             @id @default(uuid())
+  userId       String
+  departmentId String
+  role         DepartmentRoleType @default(MEMBER)
+  permissions  String[]
+  joinedAt     DateTime           @default(now())
+  isActive     Boolean            @default(true)
+  user         User               @relation(fields: [userId], references: [id])
+
+  @@unique([userId, departmentId])
+  @@index([departmentId, role])
+  @@index([userId, isActive])
+  @@index([role, isActive])
+  @@index([joinedAt, isActive])
+  @@schema("auth_schema")
+}
+
+model ClassMember {
+  id       String        @id @default(uuid())
+  userId   String
+  classId  String
+  role     ClassRoleType @default(STUDENT)
+  joinedAt DateTime      @default(now())
+  isActive Boolean       @default(true)
+  user     User          @relation(fields: [userId], references: [id])
+
+  @@unique([userId, classId])
+  @@index([classId, role])
+  @@index([userId, isActive])
+  @@index([role, isActive])
+  @@index([joinedAt, isActive])
+  @@schema("auth_schema")
+}
+
+model TeachingAssignment {
+  id        String    @id @default(uuid())
+  teacherId String
+  classId   String
+  subject   String?
+  startDate DateTime  @default(now())
+  endDate   DateTime?
+  isActive  Boolean   @default(true)
+  teacher   User      @relation(fields: [teacherId], references: [id])
+
+  @@unique([teacherId, classId])
+  @@index([classId, isActive])
+  @@index([teacherId, isActive])
+  @@index([startDate, isActive])
+  @@index([subject, isActive])
+  @@schema("auth_schema")
+}
+
+model StudentEnrollment {
+  id         String                  @id @default(uuid())
+  studentId  String
+  classId    String
+  enrollDate DateTime                @default(now())
+  status     StudentEnrollmentStatus @default(ACTIVE)
+  grade      String?
+  student    User                    @relation(fields: [studentId], references: [id])
+
+  @@unique([studentId, classId])
+  @@index([classId, status])
+  @@index([studentId, status])
+  @@index([enrollDate, status])
+  @@index([status, grade])
+  @@schema("auth_schema")
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@schema("auth_schema")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@schema("auth_schema")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@schema("auth_schema")
+}
+
+model PasswordReset {
+  id        String    @id @default(uuid())
+  userId    String
+  token     String    @unique
+  expires   DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+  user      User      @relation(fields: [userId], references: [id])
+
+  @@index([userId, expires])
+  @@index([token, expires])
+  @@index([createdAt])
+  @@schema("auth_schema")
+}
+
+model EmailVerification {
+  id        String    @id @default(uuid())
+  userId    String
+  token     String    @unique
+  expires   DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+  user      User      @relation(fields: [userId], references: [id])
+
+  @@index([userId, expires])
+  @@index([token, expires])
+  @@index([createdAt])
+  @@schema("auth_schema")
+}
+
+model AuthAttempt {
+  id        String            @id @default(uuid())
+  email     String
+  userAgent String?
+  status    AuthAttemptStatus
+  createdAt DateTime          @default(now())
+  userId    String?
+
+  @@index([email, status])
+  @@index([createdAt, status])
+  @@index([userId, status])
+  @@index([status, createdAt])
+  @@schema("auth_schema")
+}
+
+model AuditLog {
+  id            String   @id @default(uuid())
+  institutionId String
+  userId        String
+  action        String
+  resourceType  String
+  resourceId    String
+  metadata      Json?
+  ipAddress     String?
+  userAgent     String?
+  timestamp     DateTime @default(now())
+  user          User     @relation(fields: [userId], references: [id])
+
+  @@index([institutionId, timestamp])
+  @@index([userId, timestamp])
+  @@index([action, timestamp])
+  @@index([resourceType, resourceId])
+  @@index([timestamp])
+  @@index([ipAddress, timestamp])
+  @@schema("auth_schema")
+}
+
+model SocialPost {
+  id                 String               @id @default(uuid())
+  authorId           String
+  institutionId      String?
+  content            String
+  imageUrls          String[]
+  videoUrls          String[]
+  documentUrls       String[]
+  postType           SocialPostType       @default(GENERAL)
+  educationalContext String?
+  tags               String[]
+  studyGroupId       String?
+  courseId           String?
+  subjectArea        String?
+  academicLevel      AcademicLevel?
+  status             SocialPostStatus     @default(PUBLISHED)
+  visibility         SocialPostVisibility @default(PUBLIC)
+  pinned             Boolean              @default(false)
+  featured           Boolean              @default(false)
+  likeCount          Int                  @default(0)
+  commentCount       Int                  @default(0)
+  shareCount         Int                  @default(0)
+  viewCount          Int                  @default(0)
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime             @default(now()) @updatedAt
+  bookmarks          SocialPostBookmark[]
+  comments           SocialPostComment[]
+  likes              SocialPostLike[]
+  poll               SocialPostPoll?
+  shares             SocialPostShare[]
+
+  @@index([authorId, status])
+  @@index([institutionId, status])
+  @@index([createdAt, featured])
+  @@index([studyGroupId])
+  @@index([courseId])
+  @@index([status, visibility, createdAt])
+  @@index([postType, academicLevel])
+  @@index([institutionId, postType])
+  @@schema("social_schema")
+}
+
+model SocialPostLike {
+  id        String     @id @default(uuid())
+  postId    String
+  userId    String
+  reaction  String     @default("like")
+  createdAt DateTime   @default(now())
+  post      SocialPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@unique([postId, userId])
+  @@schema("social_schema")
+}
+
+model SocialPostComment {
+  id         String                  @id @default(uuid())
+  postId     String
+  userId     String
+  parentId   String?
+  content    String
+  imageUrls  String[]
+  likeCount  Int                     @default(0)
+  replyCount Int                     @default(0)
+  createdAt  DateTime                @default(now())
+  updatedAt  DateTime                @default(now()) @updatedAt
+  parent     SocialPostComment?      @relation("CommentReplies", fields: [parentId], references: [id])
+  replies    SocialPostComment[]     @relation("CommentReplies")
+  post       SocialPost              @relation(fields: [postId], references: [id], onDelete: Cascade)
+  likes      SocialPostCommentLike[]
+
+  @@index([postId, createdAt])
+  @@index([userId])
+  @@schema("social_schema")
+}
+
+model SocialPostCommentLike {
+  id        String            @id @default(uuid())
+  commentId String
+  userId    String
+  reaction  String            @default("like")
+  createdAt DateTime          @default(now())
+  comment   SocialPostComment @relation(fields: [commentId], references: [id], onDelete: Cascade)
+
+  @@unique([commentId, userId])
+  @@index([commentId])
+  @@index([userId])
+  @@schema("social_schema")
+}
+
+model SocialPostShare {
+  postId    String
+  userId    String
+  content   String?
+  privacy   SocialPostVisibility @default(PUBLIC)
+  createdAt DateTime             @default(now())
+  post      SocialPost           @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@unique([postId, userId])
+  @@schema("social_schema")
+}
+
+model SocialPostBookmark {
+  id           String     @id @default(uuid())
+  postId       String
+  userId       String
+  collectionId String?
+  createdAt    DateTime   @default(now())
+  post         SocialPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@unique([postId, userId])
+  @@schema("social_schema")
+}
+
+model SocialPostPoll {
+  id            String             @id @default(uuid())
+  postId        String             @unique
+  question      String
+  allowMultiple Boolean            @default(false)
+  expiresAt     DateTime?
+  isAnonymous   Boolean            @default(false)
+  isEducational Boolean            @default(false)
+  correctAnswer String[]           @default([])
+  explanation   String?
+  totalVotes    Int                @default(0)
+  createdAt     DateTime           @default(now())
+  updatedAt     DateTime           @updatedAt
+  options       SocialPollOption[]
+  votes         SocialPollVote[]
+  post          SocialPost         @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@schema("social_schema")
+}
+
+model SocialPollOption {
+  id         String           @id @default(uuid())
+  pollId     String
+  text       String
+  imageUrl   String?
+  orderIndex Int
+  voteCount  Int              @default(0)
+  poll       SocialPostPoll   @relation(fields: [pollId], references: [id], onDelete: Cascade)
+  votes      SocialPollVote[]
+
+  @@schema("social_schema")
+}
+
+model SocialPollVote {
+  id        String           @id @default(uuid())
+  pollId    String
+  optionId  String
+  userId    String
+  createdAt DateTime         @default(now())
+  option    SocialPollOption @relation(fields: [optionId], references: [id], onDelete: Cascade)
+  poll      SocialPostPoll   @relation(fields: [pollId], references: [id], onDelete: Cascade)
+
+  @@unique([pollId, optionId, userId])
+  @@schema("social_schema")
+}
+
+model Follow {
+  id          String       @id @default(uuid())
+  followerId  String
+  followingId String
+  status      FollowStatus @default(ACCEPTED)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  follower    User         @relation("UserFollowers", fields: [followerId], references: [id], onDelete: Cascade)
+  following   User         @relation("UserFollowing", fields: [followingId], references: [id], onDelete: Cascade)
+
+  @@unique([followerId, followingId])
+  @@index([followerId, status, createdAt])
+  @@index([followingId, status, createdAt])
+  @@index([status, createdAt])
+  @@index([followerId, followingId])
+  @@index([createdAt])
+  @@index([updatedAt])
+  @@schema("social_schema")
+}
+
+model Story {
+  id              String               @id @default(uuid())
+  authorId        String
+  content         String?
+  imageUrl        String?
+  videoUrl        String?
+  backgroundColor String?
+  visibility      SocialPostVisibility @default(FOLLOWERS)
+  allowReplies    Boolean              @default(true)
+  allowReactions  Boolean              @default(true)
+  viewCount       Int                  @default(0)
+  reactionCount   Int                  @default(0)
+  replyCount      Int                  @default(0)
+  expiresAt       DateTime
+  createdAt       DateTime             @default(now())
+  mediaTypes      String[]             @default([])
+  mediaUrls       String[]             @default([])
+  updatedAt       DateTime             @updatedAt
+  author          User                 @relation("UserStories", fields: [authorId], references: [id], onDelete: Cascade)
+  reactions       StoryReaction[]
+  views           StoryView[]
+
+  @@index([authorId, visibility, expiresAt, createdAt])
+  @@index([visibility, expiresAt, createdAt])
+  @@index([createdAt, visibility])
+  @@index([expiresAt, visibility])
+  @@index([authorId, createdAt])
+  @@index([viewCount, createdAt])
+  @@index([visibility])
+  @@schema("social_schema")
+}
+
+model StoryView {
+  id       String   @id @default(uuid())
+  storyId  String
+  userId   String
+  viewedAt DateTime @default(now())
+  story    Story    @relation(fields: [storyId], references: [id], onDelete: Cascade)
+  user     User     @relation("UserStoryViews", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([storyId, userId])
+  @@index([storyId, viewedAt])
+  @@index([userId, viewedAt])
+  @@index([viewedAt])
+  @@schema("social_schema")
+}
+
+model StoryReaction {
+  id        String   @id @default(uuid())
+  storyId   String
+  userId    String
+  reaction  String   @default("like")
+  createdAt DateTime @default(now())
+  story     Story    @relation(fields: [storyId], references: [id], onDelete: Cascade)
+  user      User     @relation("UserStoryReactions", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([storyId, userId])
+  @@index([storyId, createdAt])
+  @@index([userId, createdAt])
+  @@schema("social_schema")
+}
+
+model SocialGroup {
+  id                  String             @id @default(uuid())
+  createdById         String
+  name                String
+  description         String
+  about               String?
+  coverPhotoUrl       String?
+  profilePhotoUrl     String?
+  groupType           GroupType          @default(PUBLIC)
+  privacy             GroupPrivacy       @default(PUBLIC)
+  visibility          GroupVisibility    @default(VISIBLE)
+  category            GroupCategory      @default(EDUCATION)
+  subcategory         String?
+  tags                String[]
+  rules               String[]
+  guidelines          String?
+  location            String?
+  website             String?
+  email               String?
+  memberCount         Int                @default(1)
+  postCount           Int                @default(0)
+  activeMembers       Int                @default(1)
+  allowMemberPosts    Boolean            @default(true)
+  requirePostApproval Boolean            @default(false)
+  allowMemberInvites  Boolean            @default(true)
+  isActive            Boolean            @default(true)
+  isVerified          Boolean            @default(false)
+  isFeatured          Boolean            @default(false)
+  createdAt           DateTime           @default(now())
+  updatedAt           DateTime           @updatedAt
+  invitations         GroupInvitation[]
+  joinRequests        GroupJoinRequest[]
+  members             GroupMember[]
+  moderators          GroupModerator[]
+  posts               GroupPost[]
+
+  @@index([category, privacy])
+  @@index([createdById])
+  @@index([groupType, isActive])
+  @@index([privacy, isActive])
+  @@index([memberCount, isActive])
+  @@index([createdAt, isActive])
+  @@schema("social_schema")
+}
+
+model GroupMember {
+  id              String          @id @default(uuid())
+  groupId         String
+  userId          String
+  role            GroupMemberRole @default(MEMBER)
+  joinedAt        DateTime        @default(now())
+  invitedBy       String?
+  notifications   Boolean         @default(true)
+  postPermissions Boolean         @default(true)
+  isActive        Boolean         @default(true)
+  isMuted         Boolean         @default(false)
+  isBanned        Boolean         @default(false)
+  bannedUntil     DateTime?
+  group           SocialGroup     @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  @@unique([groupId, userId])
+  @@index([groupId, role])
+  @@index([userId, isActive])
+  @@index([joinedAt, isActive])
+  @@schema("social_schema")
+}
+
+model GroupModerator {
+  id          String      @id @default(uuid())
+  groupId     String
+  userId      String
+  assignedBy  String
+  assignedAt  DateTime    @default(now())
+  permissions String[]
+  isActive    Boolean     @default(true)
+  group       SocialGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  @@unique([groupId, userId])
+  @@index([groupId, isActive])
+  @@index([userId, isActive])
+  @@schema("social_schema")
+}
+
+model GroupPost {
+  id               String             @id @default(uuid())
+  groupId          String
+  authorId         String
+  content          String
+  imageUrls        String[]
+  videoUrls        String[]
+  documentUrls     String[]
+  postType         GroupPostType      @default(GENERAL)
+  tags             String[]
+  status           SocialPostStatus   @default(PUBLISHED)
+  pinned           Boolean            @default(false)
+  requiresApproval Boolean            @default(false)
+  approvedBy       String?
+  approvedAt       DateTime?
+  likeCount        Int                @default(0)
+  commentCount     Int                @default(0)
+  shareCount       Int                @default(0)
+  viewCount        Int                @default(0)
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  group            SocialGroup        @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  comments         GroupPostComment[]
+  likes            GroupPostLike[]
+  shares           GroupPostShare[]
+
+  @@index([groupId, status])
+  @@index([authorId, status])
+  @@index([createdAt, pinned])
+  @@index([groupId, postType])
+  @@index([status, requiresApproval])
+  @@schema("social_schema")
+}
+
+model GroupPostLike {
+  id        String    @id @default(uuid())
+  postId    String
+  userId    String
+  reaction  String    @default("like")
+  createdAt DateTime  @default(now())
+  post      GroupPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@unique([postId, userId])
+  @@index([postId])
+  @@index([userId])
+  @@schema("social_schema")
+}
+
+model GroupPostComment {
+  id         String                 @id @default(uuid())
+  postId     String
+  userId     String
+  parentId   String?
+  content    String
+  imageUrls  String[]
+  likeCount  Int                    @default(0)
+  replyCount Int                    @default(0)
+  createdAt  DateTime               @default(now())
+  updatedAt  DateTime               @updatedAt
+  parent     GroupPostComment?      @relation("GroupCommentReplies", fields: [parentId], references: [id])
+  replies    GroupPostComment[]     @relation("GroupCommentReplies")
+  post       GroupPost              @relation(fields: [postId], references: [id], onDelete: Cascade)
+  likes      GroupPostCommentLike[]
+
+  @@index([postId, createdAt])
+  @@index([userId])
+  @@index([parentId])
+  @@schema("social_schema")
+}
+
+model GroupPostCommentLike {
+  id        String           @id @default(uuid())
+  commentId String
+  userId    String
+  reaction  String           @default("like")
+  createdAt DateTime         @default(now())
+  comment   GroupPostComment @relation(fields: [commentId], references: [id], onDelete: Cascade)
+
+  @@unique([commentId, userId])
+  @@index([commentId])
+  @@index([userId])
+  @@schema("social_schema")
+}
+
+model GroupPostShare {
+  id        String    @id @default(uuid())
+  postId    String
+  userId    String
+  groupId   String
+  content   String?
+  createdAt DateTime  @default(now())
+  post      GroupPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@unique([postId, userId, groupId])
+  @@index([postId])
+  @@index([userId])
+  @@index([groupId])
+  @@schema("social_schema")
+}
+
+model GroupJoinRequest {
+  id          String            @id @default(uuid())
+  groupId     String
+  userId      String
+  message     String?
+  status      JoinRequestStatus @default(PENDING)
+  respondedBy String?
+  respondedAt DateTime?
+  response    String?
+  createdAt   DateTime          @default(now())
+  group       SocialGroup       @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  @@unique([groupId, userId])
+  @@index([groupId, status])
+  @@index([userId, status])
+  @@index([status, createdAt])
+  @@schema("social_schema")
+}
+
+model GroupInvitation {
+  id          String           @id @default(uuid())
+  groupId     String
+  inviterId   String
+  inviteeId   String
+  message     String?
+  status      InvitationStatus @default(PENDING)
+  respondedAt DateTime?
+  createdAt   DateTime         @default(now())
+  expiresAt   DateTime?
+  group       SocialGroup      @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  @@unique([groupId, inviteeId])
+  @@index([groupId, status])
+  @@index([inviteeId, status])
+  @@index([inviterId, status])
+  @@index([status, expiresAt])
+  @@schema("social_schema")
+}
+
+model OnlineCourse {
+  id                 String              @id @default(uuid())
+  instructorId       String
+  title              String
+  description        String
+  shortDescription   String?
+  category           CourseCategory
+  subcategory        String?
+  tags               String[]
+  prerequisites      String[]
+  learningOutcomes   String[]
+  level              CourseLevel         @default(BEGINNER)
+  language           String              @default("English")
+  duration           Int?
+  totalLessons       Int                 @default(0)
+  price              Float               @default(0)
+  discountPrice      Float?
+  currency           String              @default("USD")
+  isPublished        Boolean             @default(false)
+  isPremium          Boolean             @default(false)
+  thumbnailUrl       String?
+  previewVideoUrl    String?
+  enrollmentLimit    Int?
+  startDate          DateTime?
+  endDate            DateTime?
+  selfPaced          Boolean             @default(true)
+  certificateOffered Boolean             @default(true)
+  enrollmentCount    Int                 @default(0)
+  averageRating      Float               @default(0)
+  totalRatings       Int                 @default(0)
+  totalRevenue       Float               @default(0)
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @default(now()) @updatedAt
+  institutionId      String?
+  departmentId       String?
+  analytics          CourseAnalytics[]
+  assignments        CourseAssignment[]
+  certificates       CourseCertificate[]
+  discussions        CourseDiscussion[]
+  enrollments        CourseEnrollment[]
+  lessons            CourseLesson[]
+  materials          CourseMaterial[]
+  quizzes            CourseQuiz[]
+  reviews            CourseReview[]
+
+  @@index([category, isPublished])
+  @@index([instructorId])
+  @@index([level, category])
+  @@index([createdAt, isPublished])
+  @@schema("courses_schema")
+}
+
+model CourseEnrollment {
+  id                String                 @id @default(uuid())
+  courseId          String
+  studentId         String
+  enrollmentDate    DateTime               @default(now())
+  completionDate    DateTime?
+  status            EnrollmentStatus       @default(ACTIVE)
+  progress          Float                  @default(0)
+  currentLessonId   String?
+  lastAccessedAt    DateTime?
+  paymentAmount     Float?
+  paymentMethod     String?
+  paymentDate       DateTime?
+  overallGrade      Float?
+  certificateIssued Boolean                @default(false)
+  createdBy         String?
+  modifiedBy        String?
+  deletedAt         DateTime?
+  deletedBy         String?
+  createdAt         DateTime               @default(now())
+  updatedAt         DateTime               @default(now()) @updatedAt
+  submissions       AssignmentSubmission[]
+  course            OnlineCourse           @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  quizAttempts      QuizAttempt[]
+
+  @@unique([courseId, studentId])
+  @@index([courseId, status, enrollmentDate])
+  @@index([studentId, status])
+  @@index([status, lastAccessedAt])
+  @@schema("courses_schema")
+}
+
+model CourseLesson {
+  id                  String           @id @default(uuid())
+  courseId            String
+  title               String
+  description         String?
+  content             String
+  chapter             String?
+  order               Int
+  duration            Int?
+  videoUrl            String?
+  audioUrl            String?
+  documentUrls        String[]
+  imageUrls           String[]
+  isPublished         Boolean          @default(false)
+  isFree              Boolean          @default(false)
+  isRequired          Boolean          @default(true)
+  prerequisiteLessons String[]
+  createdAt           DateTime         @default(now())
+  updatedAt           DateTime         @default(now()) @updatedAt
+  course              OnlineCourse     @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  progress            LessonProgress[]
+
+  @@index([courseId, order])
+  @@index([isPublished, isFree])
+  @@schema("courses_schema")
+}
+
+model LessonProgress {
+  id             String         @id @default(uuid())
+  lessonId       String
+  studentId      String
+  status         ProgressStatus @default(NOT_STARTED)
+  watchTime      Int            @default(0)
+  completionRate Float          @default(0)
+  lastPosition   Int            @default(0)
+  notes          String?
+  bookmarked     Boolean        @default(false)
+  startedAt      DateTime?
+  completedAt    DateTime?
+  lastAccessedAt DateTime       @default(now())
+  createdAt      DateTime       @default(now())
+  lesson         CourseLesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
+  @@unique([lessonId, studentId])
+  @@schema("courses_schema")
+}
+
+model CourseQuiz {
+  id               String        @id @default(uuid())
+  courseId         String
+  lessonId         String?
+  title            String
+  description      String?
+  instructions     String?
+  questions        Json
+  totalQuestions   Int
+  passingScore     Float         @default(70)
+  timeLimit        Int?
+  maxAttempts      Int           @default(3)
+  shuffleQuestions Boolean       @default(true)
+  shuffleOptions   Boolean       @default(true)
+  showResults      Boolean       @default(true)
+  isRequired       Boolean       @default(false)
+  createdBy        String?
+  modifiedBy       String?
+  deletedAt        DateTime?
+  deletedBy        String?
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @default(now()) @updatedAt
+  course           OnlineCourse  @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  attempts         QuizAttempt[]
+
+  @@index([courseId, isRequired])
+  @@index([lessonId, isRequired])
+  @@index([createdBy, courseId])
+  @@index([deletedAt, courseId])
+  @@index([passingScore, courseId])
+  @@schema("courses_schema")
+}
+
+model QuizAttempt {
+  id            String           @id @default(uuid())
+  quizId        String
+  studentId     String
+  enrollmentId  String
+  attemptNumber Int
+  answers       Json
+  score         Float
+  passed        Boolean          @default(false)
+  startedAt     DateTime         @default(now())
+  submittedAt   DateTime?
+  timeSpent     Int?
+  enrollment    CourseEnrollment @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
+  quiz          CourseQuiz       @relation(fields: [quizId], references: [id], onDelete: Cascade)
+
+  @@unique([quizId, studentId, attemptNumber])
+  @@index([quizId, passed])
+  @@index([studentId, score])
+  @@index([enrollmentId, passed])
+  @@index([submittedAt, passed])
+  @@index([score, passed])
+  @@schema("courses_schema")
+}
+
+model CourseAssignment {
+  id                  String                 @id @default(uuid())
+  courseId            String
+  title               String
+  description         String
+  instructions        String
+  maxPoints           Float                  @default(100)
+  dueDate             DateTime?
+  allowLateSubmission Boolean                @default(true)
+  latePenalty         Float?
+  fileFormats         String[]
+  maxFileSize         Int?
+  maxSubmissions      Int                    @default(1)
+  assignmentType      AssignmentType         @default(WRITTEN)
+  isGroupWork         Boolean                @default(false)
+  peerReview          Boolean                @default(false)
+  createdBy           String?
+  modifiedBy          String?
+  deletedAt           DateTime?
+  deletedBy           String?
+  createdAt           DateTime               @default(now())
+  updatedAt           DateTime               @default(now()) @updatedAt
+  submissions         AssignmentSubmission[]
+  course              OnlineCourse           @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@index([courseId, dueDate])
+  @@index([assignmentType, courseId])
+  @@index([createdBy, courseId])
+  @@index([deletedAt, courseId])
+  @@index([isGroupWork, courseId])
+  @@schema("courses_schema")
+}
+
+model AssignmentSubmission {
+  id             String           @id @default(uuid())
+  assignmentId   String
+  studentId      String
+  enrollmentId   String
+  content        String?
+  fileUrls       String[]
+  submissionNote String?
+  grade          Float?
+  feedback       String?
+  gradedAt       DateTime?
+  gradedBy       String?
+  status         SubmissionStatus @default(SUBMITTED)
+  isLate         Boolean          @default(false)
+  submittedAt    DateTime         @default(now())
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @default(now()) @updatedAt
+  assignment     CourseAssignment @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
+  enrollment     CourseEnrollment @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
+
+  @@unique([assignmentId, studentId])
+  @@index([assignmentId, status])
+  @@index([studentId, status])
+  @@index([enrollmentId, status])
+  @@index([submittedAt, status])
+  @@index([gradedAt, status])
+  @@index([gradedBy, status])
+  @@schema("courses_schema")
+}
+
+model CourseDiscussion {
+  id         String             @id @default(uuid())
+  courseId   String
+  authorId   String
+  title      String
+  content    String
+  category   DiscussionCategory @default(GENERAL)
+  isPinned   Boolean            @default(false)
+  isLocked   Boolean            @default(false)
+  likeCount  Int                @default(0)
+  replyCount Int                @default(0)
+  viewCount  Int                @default(0)
+  deletedAt  DateTime?
+  deletedBy  String?
+  createdAt  DateTime           @default(now())
+  updatedAt  DateTime           @default(now()) @updatedAt
+  course     OnlineCourse       @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  replies    DiscussionReply[]
+
+  @@index([courseId, category])
+  @@index([createdAt, isPinned])
+  @@index([authorId, courseId])
+  @@index([isLocked, isPinned])
+  @@index([deletedAt, courseId])
+  @@schema("courses_schema")
+}
+
+model DiscussionReply {
+  id           String            @id @default(uuid())
+  discussionId String
+  authorId     String
+  parentId     String?
+  content      String
+  likeCount    Int               @default(0)
+  deletedAt    DateTime?
+  deletedBy    String?
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @default(now()) @updatedAt
+  discussion   CourseDiscussion  @relation(fields: [discussionId], references: [id], onDelete: Cascade)
+  parent       DiscussionReply?  @relation("ReplyHierarchy", fields: [parentId], references: [id])
+  children     DiscussionReply[] @relation("ReplyHierarchy")
+
+  @@index([discussionId, createdAt])
+  @@index([authorId, discussionId])
+  @@index([parentId, createdAt])
+  @@index([deletedAt, discussionId])
+  @@schema("courses_schema")
+}
+
+model CourseReview {
+  id        String       @id @default(uuid())
+  courseId  String
+  studentId String
+  rating    Int
+  title     String?
+  content   String
+  verified  Boolean      @default(false)
+  helpful   Int          @default(0)
+  deletedAt DateTime?
+  deletedBy String?
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @default(now()) @updatedAt
+  course    OnlineCourse @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@unique([courseId, studentId])
+  @@index([courseId, rating])
+  @@index([verified, rating])
+  @@index([studentId, rating])
+  @@index([deletedAt, courseId])
+  @@schema("courses_schema")
+}
+
+model CourseMaterial {
+  id                 String       @id @default(uuid())
+  courseId           String
+  title              String
+  description        String?
+  materialType       MaterialType
+  fileUrl            String?
+  fileName           String?
+  fileSize           Int?
+  downloadCount      Int          @default(0)
+  isPublic           Boolean      @default(false)
+  requiresEnrollment Boolean      @default(true)
+  createdBy          String?
+  modifiedBy         String?
+  deletedAt          DateTime?
+  deletedBy          String?
+  createdAt          DateTime     @default(now())
+  updatedAt          DateTime     @default(now()) @updatedAt
+  course             OnlineCourse @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@index([courseId, materialType])
+  @@index([isPublic, materialType])
+  @@index([createdBy, courseId])
+  @@index([deletedAt, courseId])
+  @@schema("courses_schema")
+}
+
+model CourseCertificate {
+  id                String       @id @default(uuid())
+  courseId          String
+  studentId         String
+  certificateNumber String       @unique
+  issuedDate        DateTime     @default(now())
+  expiryDate        DateTime?
+  studentName       String
+  courseName        String
+  instructorName    String
+  grade             Float?
+  certificateUrl    String?
+  verificationCode  String       @unique
+  isVerified        Boolean      @default(true)
+  generatedBy       String?
+  revokedAt         DateTime?
+  revokedBy         String?
+  createdAt         DateTime     @default(now())
+  course            OnlineCourse @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@unique([courseId, studentId])
+  @@index([studentId, isVerified])
+  @@index([certificateNumber])
+  @@index([verificationCode])
+  @@index([revokedAt, isVerified])
+  @@schema("courses_schema")
+}
+
+model CourseAnalytics {
+  id                       String       @id @default(uuid())
+  courseId                 String
+  date                     DateTime     @default(now())
+  enrollments              Int          @default(0)
+  completions              Int          @default(0)
+  dropouts                 Int          @default(0)
+  averageProgress          Float        @default(0)
+  totalWatchTime           Int          @default(0)
+  averageRating            Float        @default(0)
+  totalRevenue             Float        @default(0)
+  quizAverageScore         Float        @default(0)
+  assignmentSubmissionRate Float        @default(0)
+  discussionParticipation  Float        @default(0)
+  calculatedBy             String?
+  calculatedAt             DateTime     @default(now())
+  course                   OnlineCourse @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@unique([courseId, date])
+  @@index([date, courseId])
+  @@index([enrollments, date])
+  @@index([averageRating, date])
+  @@schema("courses_schema")
+}
+
+model JobPost {
+  id                  String            @id @default(uuid())
+  authorId            String
+  institutionId       String?
+  jobCategory         JobCategory
+  title               String
+  description         String
+  content             String?
+  company             String
+  location            String
+  jobType             JobType           @default(FULL_TIME)
+  salary              String?
+  salaryMin           Int?
+  salaryMax           Int?
+  currency            String            @default("USD")
+  remote              Boolean           @default(false)
+  requirements        String[]
+  skills              String[]
+  experience          String?
+  education           String?
+  benefits            String[]
+  status              JobStatus         @default(ACTIVE)
+  visibility          JobPostVisibility @default(PUBLIC)
+  featured            Boolean           @default(false)
+  urgent              Boolean           @default(false)
+  applicationUrl      String?
+  applicationEmail    String?
+  applicationDeadline DateTime?
+  viewCount           Int               @default(0)
+  likeCount           Int               @default(0)
+  commentCount        Int               @default(0)
+  shareCount          Int               @default(0)
+  applicationCount    Int               @default(0)
+  imageUrls           String[]
+  attachmentUrls      String[]
+  tags                String[]
+  keywords            String[]
+  expiresAt           DateTime?
+  createdAt           DateTime          @default(now())
+  updatedAt           DateTime          @default(now()) @updatedAt
+  deletedAt           DateTime?
+  deletedBy           String?
+  modifiedBy          String?
+  applications        JobApplication[]
+  comments            JobPostComment[]
+  likes               JobPostLike[]
+  shares              JobPostShare[]
+
+  @@index([jobCategory, status])
+  @@index([institutionId, status])
+  @@index([institutionId, jobCategory, status])
+  @@index([location, jobType])
+  @@index([createdAt])
+  @@index([featured, urgent])
+  @@index([status, visibility, createdAt])
+  @@index([authorId, status])
+  @@index([applicationDeadline, status])
+  @@schema("jobs_schema")
+}
+
+model JobPostLike {
+  id        String   @id @default(uuid())
+  postId    String
+  userId    String
+  reaction  String   @default("like")
+  createdAt DateTime @default(now())
+  post      JobPost  @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@unique([postId, userId])
+  @@schema("jobs_schema")
+}
+
+model JobPostComment {
+  id        String           @id @default(uuid())
+  postId    String
+  userId    String
+  parentId  String?
+  content   String
+  edited    Boolean          @default(false)
+  deletedAt DateTime?
+  deletedBy String?
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @default(now()) @updatedAt
+  parent    JobPostComment?  @relation("CommentReplies", fields: [parentId], references: [id])
+  replies   JobPostComment[] @relation("CommentReplies")
+  post      JobPost          @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@index([postId, createdAt])
+  @@index([userId, postId])
+  @@index([parentId, createdAt])
+  @@index([deletedAt, postId])
+  @@schema("jobs_schema")
+}
+
+model JobPostShare {
+  id        String   @id @default(uuid())
+  postId    String
+  userId    String
+  caption   String?
+  platform  String?
+  createdAt DateTime @default(now())
+  post      JobPost  @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@unique([postId, userId])
+  @@schema("jobs_schema")
+}
+
+model JobApplication {
+  id             String            @id @default(uuid())
+  jobPostId      String
+  applicantId    String
+  coverLetter    String?
+  resumeUrl      String?
+  portfolio      String?
+  contactInfo    Json?
+  status         ApplicationStatus @default(PENDING)
+  appliedAt      DateTime          @default(now())
+  reviewedAt     DateTime?
+  responseAt     DateTime?
+  recruiterNotes String?
+  rating         Int?
+  reviewedBy     String?
+  modifiedBy     String?
+  withdrawnAt    DateTime?
+  rejectedAt     DateTime?
+  jobPost        JobPost           @relation(fields: [jobPostId], references: [id], onDelete: Cascade)
+
+  @@unique([jobPostId, applicantId])
+  @@index([status, appliedAt])
+  @@index([applicantId, status])
+  @@index([reviewedBy, status])
+  @@index([rating, status])
+  @@index([withdrawnAt, appliedAt])
+  @@schema("jobs_schema")
+}
+
+model SalaryRange {
+  id        String   @id @default(uuid())
+  title     String
+  minSalary Int
+  maxSalary Int
+  currency  String   @default("USD")
+  location  String
+  jobType   JobType
+  createdBy String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  @@index([location, jobType])
+  @@index([minSalary, maxSalary])
+  @@index([currency, location])
+  @@schema("jobs_schema")
+}
+
+model FreelancePost {
+  id                String                    @id @default(uuid())
+  authorId          String
+  institutionId     String?
+  freelanceCategory FreelanceCategory
+  title             String
+  description       String
+  content           String?
+  budget            String?
+  budgetMin         Decimal?
+  budgetMax         Decimal?
+  currency          String                    @default("USD")
+  paymentType       PaymentType               @default(FIXED)
+  complexity        ProjectComplexity         @default(STANDARD)
+  duration          String?
+  startDate         DateTime?
+  deadline          DateTime?
+  skills            String[]
+  requirements      String[]
+  tools             String[]
+  experience        String?
+  location          String?
+  timezone          String?
+  status            ProjectStatus             @default(OPEN)
+  visibility        FreelancingPostVisibility @default(PUBLIC)
+  featured          Boolean                   @default(false)
+  urgent            Boolean                   @default(false)
+  viewCount         Int                       @default(0)
+  likeCount         Int                       @default(0)
+  commentCount      Int                       @default(0)
+  shareCount        Int                       @default(0)
+  proposalCount     Int                       @default(0)
+  imageUrls         String[]
+  attachmentUrls    String[]
+  tags              String[]
+  keywords          String[]
+  clientRating      Decimal?
+  clientLocation    String?
+  responseTime      String?
+  deletedAt         DateTime?
+  deletedBy         String?
+  modifiedBy        String?
+  expiresAt         DateTime?
+  createdAt         DateTime                  @default(now())
+  updatedAt         DateTime                  @default(now()) @updatedAt
+  comments          FreelancePostComment[]
+  likes             FreelancePostLike[]
+  shares            FreelancePostShare[]
+  proposals         Proposal[]
+
+  @@index([freelanceCategory, status])
+  @@index([institutionId, status])
+  @@index([institutionId, freelanceCategory, status])
+  @@index([budgetMin, budgetMax])
+  @@index([complexity, duration])
+  @@index([createdAt])
+  @@index([featured, urgent])
+  @@index([authorId, status])
+  @@index([location, freelanceCategory])
+  @@index([deletedAt, status])
+  @@schema("freelancing_schema")
+}
+
+model FreelancePostLike {
+  id        String        @id @default(uuid())
+  postId    String
+  userId    String
+  reaction  String        @default("like")
+  createdAt DateTime      @default(now())
+  post      FreelancePost @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@unique([postId, userId])
+  @@index([userId, createdAt])
+  @@index([reaction, postId])
+  @@schema("freelancing_schema")
+}
+
+model FreelancePostComment {
+  id        String                 @id @default(uuid())
+  postId    String
+  userId    String
+  parentId  String?
+  content   String
+  edited    Boolean                @default(false)
+  deletedAt DateTime?
+  deletedBy String?
+  createdAt DateTime               @default(now())
+  updatedAt DateTime               @default(now()) @updatedAt
+  parent    FreelancePostComment?  @relation("CommentReplies", fields: [parentId], references: [id])
+  replies   FreelancePostComment[] @relation("CommentReplies")
+  post      FreelancePost          @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@index([postId, createdAt])
+  @@index([userId, postId])
+  @@index([parentId, createdAt])
+  @@index([deletedAt, postId])
+  @@schema("freelancing_schema")
+}
+
+model FreelancePostShare {
+  id        String        @id @default(uuid())
+  postId    String
+  userId    String
+  caption   String?
+  platform  String?
+  createdAt DateTime      @default(now())
+  post      FreelancePost @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@unique([postId, userId])
+  @@index([userId, createdAt])
+  @@index([platform, createdAt])
+  @@schema("freelancing_schema")
+}
+
+model Proposal {
+  id              String         @id @default(uuid())
+  freelancePostId String
+  freelancerId    String
+  coverLetter     String
+  proposedBudget  Decimal?
+  timeline        String?
+  availability    String?
+  portfolioUrls   String[]
+  previousWork    String[]
+  certifications  String[]
+  questions       String?
+  notes           String?
+  status          ProposalStatus @default(PENDING)
+  submittedAt     DateTime       @default(now())
+  reviewedAt      DateTime?
+  responseAt      DateTime?
+  clientRating    Int?
+  clientFeedback  String?
+  withdrawnAt     DateTime?
+  rejectedAt      DateTime?
+  modifiedBy      String?
+  freelancePost   FreelancePost  @relation(fields: [freelancePostId], references: [id], onDelete: Cascade)
+
+  @@unique([freelancePostId, freelancerId])
+  @@index([status, submittedAt])
+  @@index([freelancerId, status])
+  @@index([clientRating, status])
+  @@index([withdrawnAt, submittedAt])
+  @@schema("freelancing_schema")
+}
+
+model FreelanceReview {
+  id            String    @id @default(uuid())
+  projectId     String
+  clientId      String
+  freelancerId  String
+  rating        Int
+  title         String?
+  content       String
+  qualityRating Int?
+  timelyRating  Int?
+  commRating    Int?
+  isPublic      Boolean   @default(true)
+  verified      Boolean   @default(false)
+  helpful       Int       @default(0)
+  deletedAt     DateTime?
+  deletedBy     String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @default(now()) @updatedAt
+
+  @@index([freelancerId, rating])
+  @@index([clientId, rating])
+  @@index([verified, isPublic])
+  @@index([deletedAt, freelancerId])
+  @@schema("freelancing_schema")
+}
+
+model UniversalRating {
+  id               String                @id @default(uuid())
+  raterId          String
+  rateeId          String
+  rateeType        RatingEntityType
+  context          RatingContext
+  relationshipId   String?
+  overallRating    Float
+  title            String?
+  comment          String?
+  visibility       RatingVisibility      @default(PUBLIC)
+  isAnonymous      Boolean               @default(false)
+  isVerified       Boolean               @default(false)
+  verifiedAt       DateTime?
+  verifiedBy       String?
+  status           RatingStatus          @default(ACTIVE)
+  helpfulVotes     Int                   @default(0)
+  reportCount      Int                   @default(0)
+  ipAddress        String?
+  userAgent        String?
+  interactionTime  Int?
+  disputedAt       DateTime?
+  disputedBy       String?
+  disputeReason    String?
+  moderatedAt      DateTime?
+  moderatedBy      String?
+  moderationReason String?
+  createdAt        DateTime              @default(now())
+  updatedAt        DateTime              @default(now()) @updatedAt
+  deletedAt        DateTime?
+  deletedBy        String?
+  categoryRatings  RatingCategoryScore[]
+
+  @@unique([raterId, rateeId, context, relationshipId])
+  @@index([rateeId, rateeType, status])
+  @@index([raterId, context])
+  @@index([context, overallRating])
+  @@index([visibility, status])
+  @@index([verifiedAt, isVerified])
+  @@index([createdAt, overallRating])
+  @@schema("rating_schema")
+}
+
+model RatingCategoryScore {
+  id       String          @id @default(uuid())
+  ratingId String
+  category RatingCategory
+  score    Float
+  weight   Float           @default(1.0)
+  rating   UniversalRating @relation(fields: [ratingId], references: [id], onDelete: Cascade)
+
+  @@unique([ratingId, category])
+  @@index([category, score])
+  @@schema("rating_schema")
+}
+
+model RatingRelationship {
+  id                    String            @id @default(uuid())
+  userId1               String
+  userId2               String
+  entityId              String?
+  entityType            RatingEntityType?
+  relationshipType      String
+  context               RatingContext
+  startDate             DateTime
+  endDate               DateTime?
+  isVerified            Boolean           @default(false)
+  verifiedAt            DateTime?
+  verificationProof     Json?
+  canRate1to2           Boolean           @default(true)
+  canRate2to1           Boolean           @default(true)
+  ratingDeadline        DateTime?
+  minimumInteractionMet Boolean           @default(false)
+  interactionHours      Int?
+  lastInteractionAt     DateTime?
+  createdAt             DateTime          @default(now())
+  updatedAt             DateTime          @default(now()) @updatedAt
+
+  @@unique([userId1, userId2, context, entityId])
+  @@index([userId1, relationshipType])
+  @@index([userId2, relationshipType])
+  @@index([context, isVerified])
+  @@index([endDate, canRate1to2])
+  @@schema("rating_schema")
+}
+
+model NewsPost {
+  id              String             @id @default(uuid())
+  authorId        String
+  institutionId   String?
+  title           String
+  content         String
+  summary         String?
+  imageUrls       String[]
+  videoUrls       String[]
+  documentUrls    String[]
+  newsType        NewsType           @default(EDUCATIONAL)
+  category        NewsCategory       @default(GENERAL)
+  subcategory     String?
+  tags            String[]
+  keywords        String[]
+  source          String?
+  sourceUrl       String?
+  isOfficial      Boolean            @default(false)
+  isVerified      Boolean            @default(false)
+  verifiedBy      String?
+  verifiedAt      DateTime?
+  status          NewsPostStatus     @default(PUBLISHED)
+  visibility      NewsPostVisibility @default(PUBLIC)
+  featured        Boolean            @default(false)
+  pinned          Boolean            @default(false)
+  breaking        Boolean            @default(false)
+  priority        NewsPriority       @default(NORMAL)
+  likeCount       Int                @default(0)
+  commentCount    Int                @default(0)
+  shareCount      Int                @default(0)
+  viewCount       Int                @default(0)
+  readTime        Int?
+  approved        Boolean            @default(true)
+  flagged         Boolean            @default(false)
+  flaggedBy       String?
+  flaggedReason   String?
+  moderatedBy     String?
+  moderatedAt     DateTime?
+  slug            String?
+  metaTitle       String?
+  metaDescription String?
+  publishedAt     DateTime?
+  expiresAt       DateTime?
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @default(now()) @updatedAt
+  analytics       NewsAnalytics?
+  comments        NewsPostComment[]
+  likes           NewsPostLike[]
+  shares          NewsPostShare[]
+
+  @@index([authorId, status])
+  @@index([institutionId, status])
+  @@index([institutionId, newsType, category])
+  @@index([createdAt, featured])
+  @@index([newsType, category])
+  @@index([status, visibility, createdAt])
+  @@index([breaking, priority])
+  @@index([approved, flagged])
+  @@schema("news_schema")
+}
+
+model NewsPostLike {
+  id        String   @id @default(uuid())
+  postId    String
+  userId    String
+  reaction  String   @default("like")
+  createdAt DateTime @default(now())
+  post      NewsPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@unique([postId, userId])
+  @@index([userId, createdAt])
+  @@index([reaction, postId])
+  @@schema("news_schema")
+}
+
+model NewsPostComment {
+  id            String            @id @default(uuid())
+  postId        String
+  userId        String
+  parentId      String?
+  content       String
+  imageUrls     String[]
+  edited        Boolean           @default(false)
+  likeCount     Int               @default(0)
+  replyCount    Int               @default(0)
+  flagged       Boolean           @default(false)
+  flaggedBy     String?
+  flaggedReason String?
+  approved      Boolean           @default(true)
+  moderatedBy   String?
+  moderatedAt   DateTime?
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @default(now()) @updatedAt
+  parent        NewsPostComment?  @relation("CommentReplies", fields: [parentId], references: [id])
+  replies       NewsPostComment[] @relation("CommentReplies")
+  post          NewsPost          @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@index([postId, createdAt])
+  @@index([userId])
+  @@index([approved, flagged])
+  @@schema("news_schema")
+}
+
+model NewsPostShare {
+  id        String   @id @default(uuid())
+  postId    String
+  userId    String
+  caption   String?
+  platform  String?
+  createdAt DateTime @default(now())
+  post      NewsPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@unique([postId, userId])
+  @@schema("news_schema")
+}
+
+model NewsAnalytics {
+  id               String   @id @default(uuid())
+  postId           String   @unique
+  totalViews       Int      @default(0)
+  uniqueViews      Int      @default(0)
+  avgReadingTime   Int?
+  bounceRate       Decimal?
+  totalShares      Int      @default(0)
+  totalComments    Int      @default(0)
+  totalLikes       Int      @default(0)
+  engagementRate   Decimal?
+  referralSources  Json?
+  deviceTypes      Json?
+  locations        Json?
+  clickThroughRate Decimal?
+  conversionRate   Decimal?
+  calculatedBy     String?
+  calculatedAt     DateTime @default(now())
+  post             NewsPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@unique([postId, calculatedAt])
+  @@index([calculatedAt])
+  @@index([totalViews, calculatedAt])
+  @@index([engagementRate, calculatedAt])
+  @@schema("news_schema")
+}
+
+model ChatGroup {
+  id               String            @id @default(uuid())
+  creatorId        String
+  institutionId    String?
+  name             String
+  description      String?
+  topic            String?
+  interests        String[]
+  groupType        ChatGroupType     @default(STUDY)
+  isTemporary      Boolean           @default(true)
+  expiresAt        DateTime?
+  maxMembers       Int               @default(50)
+  isPrivate        Boolean           @default(false)
+  requiresApproval Boolean           @default(false)
+  allowVoiceChat   Boolean           @default(true)
+  allowVideoChat   Boolean           @default(true)
+  allowFileShare   Boolean           @default(true)
+  allowScreenShare Boolean           @default(false)
+  memberCount      Int               @default(1)
+  messageCount     Int               @default(0)
+  lastActivity     DateTime          @default(now())
+  isActive         Boolean           @default(true)
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @default(now()) @updatedAt
+  members          ChatGroupMember[]
+  messages         ChatMessage[]
+  voiceCalls       VoiceCall[]
+
+  @@index([creatorId, createdAt])
+  @@index([institutionId, isActive])
+  @@index([institutionId, groupType, isActive])
+  @@index([groupType, isActive])
+  @@index([interests, isPrivate])
+  @@index([lastActivity, isTemporary])
+  @@schema("community_schema")
+}
+
+model ChatGroupMember {
+  id            String         @id @default(uuid())
+  groupId       String
+  userId        String
+  role          ChatMemberRole @default(MEMBER)
+  joinedAt      DateTime       @default(now())
+  invitedBy     String?
+  canInvite     Boolean        @default(false)
+  canKick       Boolean        @default(false)
+  canMute       Boolean        @default(false)
+  isAdmin       Boolean        @default(false)
+  isModerator   Boolean        @default(false)
+  lastSeen      DateTime       @default(now())
+  messageCount  Int            @default(0)
+  isOnline      Boolean        @default(false)
+  isActive      Boolean        @default(true)
+  isMuted       Boolean        @default(false)
+  mutedUntil    DateTime?
+  isInVoiceCall Boolean        @default(false)
+  isInVideoCall Boolean        @default(false)
+  isSpeaking    Boolean        @default(false)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @default(now()) @updatedAt
+  group         ChatGroup      @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  @@unique([groupId, userId])
+  @@index([userId, isOnline])
+  @@index([lastSeen, isActive])
+  @@schema("community_schema")
+}
+
+model ChatMessage {
+  id              String          @id @default(uuid())
+  groupId         String
+  senderId        String
+  content         String?
+  messageType     ChatMessageType @default(TEXT)
+  imageUrls       String[]
+  fileUrls        String[]
+  voiceNoteUrl    String?
+  fileName        String?
+  fileSize        Int?
+  replyToId       String?
+  isEdited        Boolean         @default(false)
+  editedAt        DateTime?
+  isDeleted       Boolean         @default(false)
+  deletedAt       DateTime?
+  reactions       Json?
+  reactionCount   Int             @default(0)
+  isSystemMessage Boolean         @default(false)
+  systemAction    String?
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @default(now()) @updatedAt
+  group           ChatGroup       @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  replyTo         ChatMessage?    @relation("MessageReply", fields: [replyToId], references: [id])
+  replies         ChatMessage[]   @relation("MessageReply")
+
+  @@index([groupId, createdAt])
+  @@index([senderId, createdAt])
+  @@index([messageType])
+  @@schema("community_schema")
+}
+
+model VoiceCall {
+  id               String                 @id @default(uuid())
+  groupId          String
+  initiatorId      String
+  callType         CallType               @default(VOICE)
+  roomId           String?
+  isActive         Boolean                @default(true)
+  isRecording      Boolean                @default(false)
+  recordingUrl     String?
+  maxParticipants  Int                    @default(10)
+  allowScreenShare Boolean                @default(false)
+  isGroupCall      Boolean                @default(true)
+  participantCount Int                    @default(0)
+  duration         Int                    @default(0)
+  startedAt        DateTime               @default(now())
+  endedAt          DateTime?
+  createdAt        DateTime               @default(now())
+  updatedAt        DateTime               @default(now()) @updatedAt
+  group            ChatGroup              @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  participants     VoiceCallParticipant[]
+
+  @@index([groupId, isActive])
+  @@index([startedAt, callType])
+  @@schema("community_schema")
+}
+
+model VoiceCallParticipant {
+  id              String    @id @default(uuid())
+  callId          String
+  userId          String
+  joinedAt        DateTime  @default(now())
+  leftAt          DateTime?
+  duration        Int       @default(0)
+  isMuted         Boolean   @default(false)
+  hasVideo        Boolean   @default(false)
+  isScreenSharing Boolean   @default(false)
+  audioQuality    String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @default(now()) @updatedAt
+  call            VoiceCall @relation(fields: [callId], references: [id], onDelete: Cascade)
+
+  @@unique([callId, userId])
+  @@index([userId, joinedAt])
+  @@schema("community_schema")
+}
+
+model UserInterest {
+  id           String             @id @default(uuid())
+  userId       String
+  interest     String
+  category     InterestCategory   @default(ACADEMIC)
+  level        SkillLevel         @default(BEGINNER)
+  isPreferred  Boolean            @default(false)
+  wantsToLearn Boolean            @default(true)
+  wantsToTeach Boolean            @default(false)
+  availableFor AvailabilityType[]
+  isActive     Boolean            @default(true)
+  createdAt    DateTime           @default(now())
+  updatedAt    DateTime           @default(now()) @updatedAt
+
+  @@unique([userId, interest])
+  @@index([interest, category])
+  @@index([level, wantsToLearn])
+  @@schema("community_schema")
+}
+
+model UserMatch {
+  id              String      @id @default(uuid())
+  user1Id         String
+  user2Id         String
+  matchType       MatchType   @default(INTEREST_BASED)
+  commonInterests String[]
+  matchScore      Float       @default(0.0)
+  status          MatchStatus @default(PENDING)
+  initiatedBy     String?
+  acceptedAt      DateTime?
+  rejectedAt      DateTime?
+  groupId         String?
+  hasInteracted   Boolean     @default(false)
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @default(now()) @updatedAt
+
+  @@unique([user1Id, user2Id])
+  @@index([status, matchScore])
+  @@index([matchType, createdAt])
+  @@schema("community_schema")
+}
+
+model Conversation {
+  id               String                    @id @default(uuid())
+  type             ConversationType          @default(DIRECT)
+  title            String?
+  description      String?
+  isGroup          Boolean                   @default(false)
+  groupAvatar      String?
+  maxMembers       Int?                      @default(50)
+  isEncrypted      Boolean                   @default(true)
+  isArchived       Boolean                   @default(false)
+  isBlocked        Boolean                   @default(false)
+  isMuted          Boolean                   @default(false)
+  adminOnly        Boolean                   @default(false)
+  readReceipts     Boolean                   @default(true)
+  typingStatus     Boolean                   @default(true)
+  createdAt        DateTime                  @default(now())
+  updatedAt        DateTime                  @default(now()) @updatedAt
+  lastActivity     DateTime                  @default(now())
+  customSettings   Json?
+  isPinned         Boolean                   @default(false)
+  theme            String?
+  wallpaper        String?
+  participants     ConversationParticipant[]
+  messages         Message[]
+  messageDrafts    MessageDraft[]
+  messageReads     MessageRead[]
+  pinnedMessages   PinnedMessage[]
+  typingIndicators TypingIndicator[]
+
+  @@index([type, isArchived])
+  @@index([lastActivity, isArchived])
+  @@index([createdAt])
+  @@schema("messages_schema")
+}
+
+model ConversationParticipant {
+  id               String       @id @default(uuid())
+  conversationId   String
+  userId           String
+  isAdmin          Boolean      @default(false)
+  isModerator      Boolean      @default(false)
+  canAddMembers    Boolean      @default(false)
+  canRemoveMembers Boolean      @default(false)
+  isMuted          Boolean      @default(false)
+  isPinned         Boolean      @default(false)
+  customName       String?
+  isBlocked        Boolean      @default(false)
+  isHidden         Boolean      @default(false)
+  joinedAt         DateTime     @default(now())
+  leftAt           DateTime?
+  lastSeenAt       DateTime     @default(now())
+  conversation     Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  user             User         @relation(fields: [userId], references: [id], onDelete: Cascade, map: "ConversationParticipant_user_fkey")
+
+  @@unique([conversationId, userId])
+  @@index([userId, isHidden])
+  @@index([conversationId, isAdmin])
+  @@schema("messages_schema")
+}
+
+model Message {
+  id              String               @id @default(uuid())
+  conversationId  String
+  senderId        String
+  content         String?
+  messageType     MessageType          @default(TEXT)
+  mediaUrls       String[]
+  mediaMetadata   Json?
+  thumbnailUrls   String[]
+  isEdited        Boolean              @default(false)
+  editedAt        DateTime?
+  originalContent String?
+  replyToId       String?
+  threadId        String?
+  priority        MessagePriority      @default(NORMAL)
+  status          MessageStatus        @default(SENT)
+  mentions        String[]
+  hashtags        String[]
+  links           Json?
+  scheduledFor    DateTime?
+  isScheduled     Boolean              @default(false)
+  isAutoGenerated Boolean              @default(false)
+  isEncrypted     Boolean              @default(true)
+  isDeleted       Boolean              @default(false)
+  deletedAt       DateTime?
+  deletedBy       String?
+  deliveredAt     DateTime?
+  readCount       Int                  @default(0)
+  latitude        Float?
+  longitude       Float?
+  locationName    String?
+  createdAt       DateTime             @default(now())
+  updatedAt       DateTime             @default(now()) @updatedAt
+  conversation    Conversation         @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  sender          User                 @relation("MessageSender", fields: [senderId], references: [id], onDelete: Cascade)
+  replyTo         Message?             @relation("MessageReplies", fields: [replyToId], references: [id])
+  replies         Message[]            @relation("MessageReplies")
+  reactions       MessageReaction[]
+  reads           MessageRead[]
+  translations    MessageTranslation[]
+  pinnedMessage   PinnedMessage?
+
+  @@index([conversationId, createdAt])
+  @@index([senderId, createdAt])
+  @@index([status, createdAt])
+  @@index([isDeleted, createdAt])
+  @@index([replyToId])
+  @@index([threadId])
+  @@schema("messages_schema")
+}
+
+model MessageRead {
+  id             String       @id @default(uuid())
+  messageId      String
+  conversationId String
+  userId         String
+  readAt         DateTime     @default(now())
+  deliveredAt    DateTime?
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  message        Message      @relation(fields: [messageId], references: [id], onDelete: Cascade)
+
+  @@unique([messageId, userId])
+  @@index([conversationId, userId])
+  @@index([userId, readAt])
+  @@schema("messages_schema")
+}
+
+model MessageReaction {
+  id        String   @id @default(uuid())
+  messageId String
+  userId    String
+  emoji     String
+  reaction  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+  message   Message  @relation(fields: [messageId], references: [id], onDelete: Cascade)
+
+  @@unique([messageId, userId, emoji])
+  @@index([messageId, reaction])
+  @@index([userId, createdAt])
+  @@schema("messages_schema")
+}
+
+model TypingIndicator {
+  id             String       @id @default(uuid())
+  conversationId String
+  userId         String
+  isTyping       Boolean      @default(true)
+  startedAt      DateTime     @default(now())
+  lastUpdate     DateTime     @default(now()) @updatedAt
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  @@unique([conversationId, userId])
+  @@index([conversationId, isTyping])
+  @@schema("messages_schema")
+}
+
+model MessageDraft {
+  id             String       @id @default(uuid())
+  conversationId String
+  userId         String
+  content        String
+  messageType    MessageType  @default(TEXT)
+  mediaUrls      String[]
+  replyToId      String?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @default(now()) @updatedAt
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  @@unique([conversationId, userId])
+  @@index([userId, updatedAt])
+  @@schema("messages_schema")
+}
+
+model MessageAnalytics {
+  id              String   @id @default(uuid())
+  conversationId  String
+  messageId       String   @unique
+  totalReads      Int      @default(0)
+  totalReactions  Int      @default(0)
+  totalReplies    Int      @default(0)
+  avgResponseTime Float?
+  engagementScore Float?
+  popularityScore Float?
+  calculatedAt    DateTime @default(now())
+  updatedAt       DateTime @default(now()) @updatedAt
+
+  @@index([conversationId, engagementScore])
+  @@schema("messages_schema")
+}
+
+model BlockedUser {
+  id         String   @id @default(uuid())
+  blockerId  String
+  blockedId  String
+  reason     String?
+  isReported Boolean  @default(false)
+  blockedAt  DateTime @default(now())
+
+  @@unique([blockerId, blockedId])
+  @@index([blockerId])
+  @@index([blockedId])
+  @@schema("messages_schema")
+}
+
+model MessageTranslation {
+  id             String   @id @default(uuid())
+  messageId      String
+  originalText   String
+  translatedText String
+  sourceLanguage String
+  targetLanguage String
+  confidence     Float?
+  translatedBy   String?
+  serviceName    String?
+  serviceVersion String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @default(now()) @updatedAt
+  message        Message  @relation(fields: [messageId], references: [id], onDelete: Cascade)
+
+  @@unique([messageId, targetLanguage])
+  @@index([messageId])
+  @@index([targetLanguage])
+  @@schema("messages_schema")
+}
+
+model PinnedMessage {
+  id             String       @id @default(uuid())
+  conversationId String
+  messageId      String       @unique
+  pinnedBy       String
+  pinnedAt       DateTime     @default(now())
+  pinnedOrder    Int          @default(0)
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  message        Message      @relation(fields: [messageId], references: [id], onDelete: Cascade)
+
+  @@unique([conversationId, messageId])
+  @@index([conversationId, pinnedOrder])
+  @@index([pinnedBy])
+  @@schema("messages_schema")
+}
+
+model Feedback {
+  id                  String             @id @default(uuid())
+  userId              String
+  title               String
+  description         String
+  feedbackType        FeedbackType
+  category            FeedbackCategory   @default(OTHER)
+  moduleContext       String?
+  pageUrl             String?
+  userAgent           String?
+  deviceInfo          String?
+  priority            FeedbackPriority   @default(NORMAL)
+  status              FeedbackStatus     @default(PENDING)
+  tags                String[]
+  rating              Int?
+  assignedTo          String?
+  internalNotes       String?
+  resolutionNotes     String?
+  estimatedResolution DateTime?
+  attachmentUrls      String[]
+  sentimentScore      SentimentScore?
+  sentimentConfidence Float?
+  isPublic            Boolean            @default(false)
+  isAnonymous         Boolean            @default(false)
+  followUpRequired    Boolean            @default(false)
+  followUpDate        DateTime?
+  createdAt           DateTime           @default(now())
+  updatedAt           DateTime           @default(now()) @updatedAt
+  resolvedAt          DateTime?
+  responses           FeedbackResponse[]
+  votes               FeedbackVote[]
+
+  @@index([userId, feedbackType])
+  @@index([status, priority])
+  @@index([category, createdAt])
+  @@index([assignedTo, status])
+  @@schema("feedback_schema")
+}
+
+model FeedbackResponse {
+  id             String       @id @default(uuid())
+  feedbackId     String
+  responderId    String
+  content        String
+  isOfficial     Boolean      @default(false)
+  isInternal     Boolean      @default(false)
+  responseType   ResponseType @default(COMMENT)
+  attachmentUrls String[]
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @default(now()) @updatedAt
+  feedback       Feedback     @relation(fields: [feedbackId], references: [id], onDelete: Cascade)
+
+  @@index([feedbackId, createdAt])
+  @@index([responderId, isOfficial])
+  @@schema("feedback_schema")
+}
+
+model FeedbackVote {
+  id         String   @id @default(uuid())
+  feedbackId String
+  userId     String
+  isHelpful  Boolean
+  voteType   VoteType @default(HELPFUL)
+  createdAt  DateTime @default(now())
+  feedback   Feedback @relation(fields: [feedbackId], references: [id], onDelete: Cascade)
+
+  @@unique([feedbackId, userId])
+  @@schema("feedback_schema")
+}
+
+model Review {
+  id               String           @id @default(uuid())
+  reviewerId       String
+  targetType       ReviewTargetType
+  targetId         String
+  title            String?
+  content          String
+  rating           Int
+  reviewCategory   ReviewCategory   @default(GENERAL)
+  tags             String[]
+  isVerified       Boolean          @default(false)
+  verificationData Json?
+  isModerated      Boolean          @default(false)
+  moderatedBy      String?
+  moderationReason String?
+  helpfulCount     Int              @default(0)
+  reportCount      Int              @default(0)
+  imageUrls        String[]
+  videoUrls        String[]
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @default(now()) @updatedAt
+  reports          ReviewReport[]
+  votes            ReviewVote[]
+
+  @@index([targetType, targetId])
+  @@index([reviewerId, createdAt])
+  @@index([rating, isVerified])
+  @@schema("feedback_schema")
+}
+
+model ReviewVote {
+  id        String   @id @default(uuid())
+  reviewId  String
+  userId    String
+  isHelpful Boolean
+  createdAt DateTime @default(now())
+  review    Review   @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+
+  @@unique([reviewId, userId])
+  @@schema("feedback_schema")
+}
+
+model ReviewReport {
+  id             String       @id @default(uuid())
+  reviewId       String
+  reporterId     String
+  reason         ReportReason
+  description    String?
+  status         ReportStatus @default(PENDING)
+  resolvedBy     String?
+  resolutionNote String?
+  createdAt      DateTime     @default(now())
+  resolvedAt     DateTime?
+  review         Review       @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+
+  @@index([reviewId, status])
+  @@index([reporterId])
+  @@schema("feedback_schema")
+}
+
+model Survey {
+  id                     String           @id @default(uuid())
+  creatorId              String
+  title                  String
+  description            String?
+  instructions           String?
+  surveyType             SurveyType       @default(FEEDBACK)
+  isAnonymous            Boolean          @default(false)
+  allowMultipleResponses Boolean          @default(false)
+  targetAudience         String[]
+  targetCourses          String[]
+  questions              Json
+  isActive               Boolean          @default(false)
+  startDate              DateTime?
+  endDate                DateTime?
+  responseCount          Int              @default(0)
+  completionRate         Float            @default(0)
+  createdAt              DateTime         @default(now())
+  updatedAt              DateTime         @default(now()) @updatedAt
+  responses              SurveyResponse[]
+
+  @@index([creatorId, isActive])
+  @@index([surveyType, startDate])
+  @@schema("feedback_schema")
+}
+
+model SurveyResponse {
+  id          String    @id @default(uuid())
+  surveyId    String
+  responderId String?
+  responses   Json
+  timeSpent   Int?
+  isComplete  Boolean   @default(false)
+  deviceInfo  String?
+  ipAddress   String?
+  userAgent   String?
+  startedAt   DateTime  @default(now())
+  completedAt DateTime?
+  survey      Survey    @relation(fields: [surveyId], references: [id], onDelete: Cascade)
+
+  @@index([surveyId, isComplete])
+  @@index([responderId])
+  @@schema("feedback_schema")
+}
+
+model Statistics {
+  id                                   String   @id @default(uuid())
+  institutionId                        String?
+  departmentId                         String?
+  courseId                             String?
+  userId                               String?
+  date                                 DateTime @default(now())
+  totalInstitutions                    Int      @default(0)
+  totalStudents                        Int      @default(0)
+  totalTeachers                        Int      @default(0)
+  dailyActiveUsers                     Int      @default(0)
+  totalJobPosts                        Int      @default(0)
+  totalMonthlyJobApplications          Int      @default(0)
+  totalMonthlyFreelancingPosts         Int      @default(0)
+  totalMonthlyStudentsInterlinkedPosts Int      @default(0)
+  totalMonthlyTopRatedInstitutions     Int      @default(0)
+  totalMonthlyTopRatedStudents         Int      @default(0)
+  totalMonthlyTopRatedTeachers         Int      @default(0)
+  totalMonthlyTopRatedFreelancers      Int      @default(0)
+  totalMonthlyTopRatedJobs             Int      @default(0)
+  totalEnrollments                     Int      @default(0)
+  newEnrollments                       Int      @default(0)
+  droppedEnrollments                   Int      @default(0)
+  totalCompletions                     Int      @default(0)
+  completionRate                       Float    @default(0)
+  totalRevenue                         Float    @default(0)
+  averageRevenue                       Float    @default(0)
+  totalLogins                          Int      @default(0)
+  activeUsers                          Int      @default(0)
+  inactiveUsers                        Int      @default(0)
+  averageGrade                         Float    @default(0)
+  passRate                             Float    @default(0)
+  createdAt                            DateTime @default(now())
+  updatedAt                            DateTime @default(now()) @updatedAt
+
+  @@index([institutionId, date])
+  @@index([departmentId, date])
+  @@index([courseId, date])
+  @@index([userId, date])
+  @@schema("statistics_schema")
+}
+
+model Institution {
+  id                     String                   @id @default(uuid())
+  name                   String
+  description            String?
+  type                   InstitutionType          @default(UNIVERSITY)
+  status                 InstitutionStatus        @default(ACTIVE)
+  city                   String?
+  state                  String?
+  country                String?
+  zipCode                String?
+  phoneNumber            String?
+  email                  String?
+  website                String?
+  logoUrl                String?
+  bannerUrl              String?
+  createdBy              String?
+  modifiedBy             String?
+  deletedAt              DateTime?
+  deletedBy              String?
+  createdAt              DateTime                 @default(now())
+  apiKeys                ApiKey[]
+  traditionalCourses     Course[]
+  departments            Department[]             @relation("DepartmentInstitution")
+  applications           InstitutionApplication[] @relation("InstitutionApplications")
+  enrollments            InstitutionEnrollment[]  @relation("InstitutionEnrollments")
+  institutionalAnalytics InstitutionalAnalytics[]
+  moduleIntegrations     ModuleIntegration[]
+  programs               Program[]
+  staff                  Staff[]
+  students               Student[]
+  tenantSchemas          TenantSchema?
+  webhooks               Webhook[]
+
+  @@index([name])
+  @@index([type, status])
+  @@index([city, country])
+  @@index([status, createdAt])
+  @@index([createdBy, status])
+  @@schema("edu_matrix_hub_schema")
+}
+
+model Department {
+  id                  String                @id @default(uuid())
+  name                String
+  description         String?
+  institutionId       String
+  headId              String?
+  status              DepartmentStatus      @default(ACTIVE)
+  createdBy           String?
+  modifiedBy          String?
+  deletedAt           DateTime?
+  deletedBy           String?
+  createdAt           DateTime              @default(now())
+  updatedAt           DateTime              @default(now()) @updatedAt
+  traditionalCourses  Course[]              @relation("DepartmentCourses")
+  institution         Institution           @relation("DepartmentInstitution", fields: [institutionId], references: [id], onDelete: Cascade)
+  departmentAnalytics DepartmentAnalytics[]
+  staff               Staff[]
+
+  @@index([institutionId, name])
+  @@index([status, institutionId])
+  @@index([headId, status])
+  @@index([createdAt, status])
+  @@index([deletedAt, institutionId])
+  @@schema("edu_matrix_hub_schema")
+}
+
+model Notification {
+  id                 String                    @id @default(uuid())
+  userId             String
+  institutionId      String?
+  title              String
+  message            String
+  shortMessage       String?
+  type               NotificationType
+  category           NotificationCategory
+  priority           NotificationPriority      @default(NORMAL)
+  entityType         String?
+  entityId           String?
+  actionUrl          String?
+  actionLabel        String?
+  imageUrl           String?
+  iconUrl            String?
+  data               Json?
+  channels           NotificationChannel[]
+  scheduledFor       DateTime?
+  expiresAt          DateTime?
+  status             NotificationStatus        @default(PENDING)
+  isRead             Boolean                   @default(false)
+  readAt             DateTime?
+  dismissedAt        DateTime?
+  groupId            String?
+  batchId            String?
+  groupKey           String?
+  actorId            String?
+  aggregatedCount    Int                       @default(1)
+  aggregatedActors   Json?
+  sourceSystem       String?
+  templateId         String?
+  campaignId         String?
+  preferenceId       String?
+  pushSubscriptionId String?
+  createdAt          DateTime                  @default(now())
+  updatedAt          DateTime                  @default(now()) @updatedAt
+  preference         NotificationPreference?   @relation(fields: [preferenceId], references: [id])
+  pushSubscription   PushSubscription?         @relation(fields: [pushSubscriptionId], references: [id])
+  deliveries         NotificationDelivery[]
+  interactions       NotificationInteraction[]
+
+  @@index([userId, status])
+  @@index([institutionId, status])
+  @@index([institutionId, type, category])
+  @@index([type, category])
+  @@index([createdAt, priority])
+  @@index([groupId, batchId])
+  @@index([scheduledFor, status])
+  @@index([groupKey, userId])
+  @@index([userId, isRead, createdAt])
+  @@index([actorId, type, createdAt])
+  @@schema("notifications_schema")
+}
+
+model NotificationDelivery {
+  id               String              @id @default(uuid())
+  notificationId   String
+  channel          NotificationChannel
+  status           DeliveryStatus      @default(PENDING)
+  recipientAddress String
+  provider         String?
+  providerId       String?
+  sentAt           DateTime?
+  deliveredAt      DateTime?
+  failedAt         DateTime?
+  errorMessage     String?
+  retryCount       Int                 @default(0)
+  opened           Boolean             @default(false)
+  openedAt         DateTime?
+  clicked          Boolean             @default(false)
+  clickedAt        DateTime?
+  createdAt        DateTime            @default(now())
+  updatedAt        DateTime            @default(now()) @updatedAt
+  notification     Notification        @relation(fields: [notificationId], references: [id], onDelete: Cascade)
+
+  @@index([notificationId])
+  @@index([status, sentAt])
+  @@schema("notifications_schema")
+}
+
+model NotificationPreference {
+  id                          String          @id @default(uuid())
+  userId                      String          @unique
+  globalEnabled               Boolean         @default(true)
+  emailEnabled                Boolean         @default(true)
+  smsEnabled                  Boolean         @default(false)
+  pushEnabled                 Boolean         @default(true)
+  digestFrequency             DigestFrequency @default(DAILY)
+  quietHoursStart             String?
+  quietHoursEnd               String?
+  timezone                    String          @default("UTC")
+  educationalNotifications    Boolean         @default(true)
+  socialNotifications         Boolean         @default(true)
+  financialNotifications      Boolean         @default(true)
+  administrativeNotifications Boolean         @default(true)
+  technicalNotifications      Boolean         @default(false)
+  marketingNotifications      Boolean         @default(false)
+  securityNotifications       Boolean         @default(true)
+  achievementNotifications    Boolean         @default(true)
+  courseUpdates               Boolean         @default(true)
+  assignmentReminders         Boolean         @default(true)
+  gradeNotifications          Boolean         @default(true)
+  messageNotifications        Boolean         @default(true)
+  socialInteractions          Boolean         @default(true)
+  jobOpportunities            Boolean         @default(false)
+  newsUpdates                 Boolean         @default(false)
+  notificationSound           Boolean         @default(true)
+  vibrationEnabled            Boolean         @default(true)
+  emailDigestEnabled          Boolean         @default(true)
+  mobileNotificationsEnabled  Boolean         @default(true)
+  desktopNotificationsEnabled Boolean         @default(true)
+  systemNotifications         Boolean         @default(true)
+  educationalChannels         Json?
+  socialChannels              Json?
+  financialChannels           Json?
+  administrativeChannels      Json?
+  createdAt                   DateTime        @default(now())
+  updatedAt                   DateTime        @default(now()) @updatedAt
+  notifications               Notification[]
+
+  @@schema("notifications_schema")
+}
+
+model PushSubscription {
+  id            String         @id @default(uuid())
+  userId        String
+  deviceId      String
+  endpoint      String
+  p256dh        String
+  auth          String
+  userAgent     String?
+  deviceType    String?
+  browserName   String?
+  osName        String?
+  isActive      Boolean        @default(true)
+  subscribedAt  DateTime       @default(now())
+  lastUsedAt    DateTime?
+  expiresAt     DateTime?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @default(now()) @updatedAt
+  notifications Notification[]
+
+  @@unique([userId, deviceId])
+  @@schema("notifications_schema")
+}
+
+model NotificationTemplate {
+  id               String                @id @default(uuid())
+  templateKey      String                @unique
+  name             String
+  description      String?
+  titleTemplate    String
+  messageTemplate  String
+  shortTemplate    String?
+  type             NotificationType
+  category         NotificationCategory
+  priority         NotificationPriority  @default(NORMAL)
+  channels         NotificationChannel[]
+  variables        Json
+  sampleData       Json?
+  isActive         Boolean               @default(true)
+  requiresApproval Boolean               @default(false)
+  language         String                @default("en")
+  localizations    Json?
+  version          String                @default("1.0")
+  createdBy        String
+  createdAt        DateTime              @default(now())
+  updatedAt        DateTime              @default(now()) @updatedAt
+
+  @@index([templateKey, isActive])
+  @@index([type, category])
+  @@schema("notifications_schema")
+}
+
+model NotificationGroup {
+  id               String               @id @default(uuid())
+  name             String
+  description      String?
+  groupKey         String               @unique
+  type             NotificationType
+  category         NotificationCategory
+  maxNotifications Int?
+  mergeTimeWindow  Int?
+  isActive         Boolean              @default(true)
+  createdAt        DateTime             @default(now())
+  updatedAt        DateTime             @default(now()) @updatedAt
+
+  @@index([groupKey, isActive])
+  @@schema("notifications_schema")
+}
+
+model NotificationInteraction {
+  id              String          @id @default(uuid())
+  notificationId  String
+  userId          String
+  interactionType InteractionType
+  interactionData Json?
+  createdAt       DateTime        @default(now())
+  notification    Notification    @relation(fields: [notificationId], references: [id], onDelete: Cascade)
+
+  @@index([notificationId, interactionType])
+  @@index([userId, createdAt])
+  @@schema("notifications_schema")
+}
+
+model NotificationAnalytics {
+  id                  String   @id @default(uuid())
+  date                DateTime @unique
+  totalSent           Int      @default(0)
+  totalDelivered      Int      @default(0)
+  totalFailed         Int      @default(0)
+  totalRead           Int      @default(0)
+  totalClicked        Int      @default(0)
+  emailSent           Int      @default(0)
+  emailDelivered      Int      @default(0)
+  smsSent             Int      @default(0)
+  smsDelivered        Int      @default(0)
+  pushSent            Int      @default(0)
+  pushDelivered       Int      @default(0)
+  educationalSent     Int      @default(0)
+  socialSent          Int      @default(0)
+  financialSent       Int      @default(0)
+  averageDeliveryTime Int      @default(0)
+  openRate            Float    @default(0)
+  clickRate           Float    @default(0)
+  createdAt           DateTime @default(now())
+
+  @@schema("notifications_schema")
+}
+
+model InstitutionApplication {
+  id               String                       @id @default(uuid())
+  applicantUserId  String
+  institutionId    String
+  status           InstitutionApplicationStatus @default(PENDING)
+  applicationData  Json                         @default("{}")
+  reviewedByUserId String?
+  reviewedAt       DateTime?
+  reviewNotes      String?
+  rejectionReason  String?
+  submittedAt      DateTime                     @default(now())
+  createdAt        DateTime                     @default(now())
+  updatedAt        DateTime                     @updatedAt
+  institution      Institution                  @relation("InstitutionApplications", fields: [institutionId], references: [id])
+  enrollment       InstitutionEnrollment?
+
+  @@unique([applicantUserId, institutionId])
+  @@schema("edu_matrix_hub_schema")
+}
+
+model InstitutionEnrollment {
+  id            String                 @id @default(uuid())
+  studentUserId String
+  institutionId String
+  applicationId String                 @unique
+  studentId     String
+  status        EnrollmentStatus       @default(ACTIVE)
+  enrolledAt    DateTime               @default(now())
+  createdAt     DateTime               @default(now())
+  updatedAt     DateTime               @updatedAt
+  application   InstitutionApplication @relation(fields: [applicationId], references: [id])
+  institution   Institution            @relation("InstitutionEnrollments", fields: [institutionId], references: [id])
+
+  @@unique([institutionId, studentId])
+  @@schema("edu_matrix_hub_schema")
+}
+
+model Program {
+  id            String               @id @default(uuid())
+  institutionId String
+  name          String
+  code          String
+  type          ProgramType
+  duration      Int
+  description   String
+  requirements  String[]             @default([])
+  credits       Int?
+  createdAt     DateTime             @default(now())
+  updatedAt     DateTime             @updatedAt
+  attendance    Attendance[]         @relation("ProgramAttendance")
+  courses       Course[]
+  institution   Institution          @relation(fields: [institutionId], references: [id])
+  programReqs   ProgramRequirement[]
+  students      Student[]            @relation("StudentProgram")
+
+  @@unique([institutionId, code])
+  @@schema("edu_matrix_hub_schema")
+}
+
+model ProgramRequirement {
+  id          String   @id @default(uuid())
+  programId   String
+  type        String
+  description String
+  credits     Int
+  courses     String[] @default([])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  program     Program  @relation(fields: [programId], references: [id])
+
+  @@schema("edu_matrix_hub_schema")
+}
+
+model Course {
+  id            String             @id @default(uuid())
+  institutionId String
+  departmentId  String
+  programId     String?
+  code          String
+  name          String
+  description   String
+  credits       Int
+  syllabus      String?
+  prerequisites String[]           @default([])
+  isActive      Boolean            @default(true)
+  createdAt     DateTime           @default(now())
+  updatedAt     DateTime           @updatedAt
+  assignments   Assignment[]
+  attendance    Attendance[]
+  department    Department         @relation("DepartmentCourses", fields: [departmentId], references: [id])
+  institution   Institution        @relation(fields: [institutionId], references: [id])
+  program       Program?           @relation(fields: [programId], references: [id])
+  instructors   CourseInstructor[]
+  examinations  Examination[]
+  grades        Grade[]
+  schedule      Schedule[]
+
+  @@unique([institutionId, code])
+  @@schema("edu_matrix_hub_schema")
+}
+
+model CourseInstructor {
+  id           String   @id @default(uuid())
+  courseId     String
+  instructorId String
+  role         String   @default("PRIMARY")
+  assignedAt   DateTime @default(now())
+  isActive     Boolean  @default(true)
+  course       Course   @relation(fields: [courseId], references: [id])
+  instructor   Staff    @relation(fields: [instructorId], references: [id])
+
+  @@unique([courseId, instructorId])
+  @@schema("edu_matrix_hub_schema")
+}
+
+model Staff {
+  id                String             @id @default(uuid())
+  userId            String             @unique
+  institutionId     String
+  departmentId      String
+  employeeId        String
+  role              StaffRole
+  status            StaffStatus        @default(ACTIVE)
+  hireDate          DateTime           @default(now())
+  contractType      String?
+  salary            Decimal?
+  qualifications    String[]           @default([])
+  specializations   String[]           @default([])
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  courseInstructors CourseInstructor[]
+  department        Department         @relation(fields: [departmentId], references: [id])
+  institution       Institution        @relation(fields: [institutionId], references: [id])
+
+  @@unique([institutionId, employeeId])
+  @@schema("edu_matrix_hub_schema")
+}
+
+model Student {
+  id             String             @id @default(uuid())
+  userId         String             @unique
+  institutionId  String
+  studentId      String
+  programId      String?
+  year           Int?
+  semester       Int?
+  status         StudentStatus      @default(ACTIVE)
+  enrollmentDate DateTime           @default(now())
+  graduationDate DateTime?
+  gpa            Decimal?
+  totalCredits   Int?               @default(0)
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
+  attendance     Attendance[]
+  examResults    ExamResult[]
+  grades         Grade[]
+  payments       Payment[]
+  scholarships   ScholarshipAward[]
+  institution    Institution        @relation(fields: [institutionId], references: [id])
+  program        Program?           @relation("StudentProgram", fields: [programId], references: [id])
+
+  @@unique([institutionId, studentId])
+  @@schema("edu_matrix_hub_schema")
+}
+
+model Attendance {
+  id        String           @id @default(uuid())
+  courseId  String
+  studentId String
+  programId String?
+  date      DateTime         @db.Date
+  status    AttendanceStatus
+  note      String?
+  markedAt  DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+  course    Course           @relation(fields: [courseId], references: [id])
+  program   Program?         @relation("ProgramAttendance", fields: [programId], references: [id])
+  student   Student          @relation(fields: [studentId], references: [id])
+
+  @@unique([courseId, studentId, date])
+  @@schema("edu_matrix_hub_schema")
+}
+
+model Grade {
+  id        String    @id @default(uuid())
+  studentId String
+  courseId  String
+  type      GradeType
+  score     Decimal
+  maxScore  Decimal
+  weight    Decimal   @default(1.0)
+  feedback  String?
+  gradedAt  DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  course    Course    @relation(fields: [courseId], references: [id])
+  student   Student   @relation(fields: [studentId], references: [id])
+
+  @@unique([studentId, courseId, type])
+  @@schema("edu_matrix_hub_schema")
+}
+
+model Assignment {
+  id           String   @id @default(uuid())
+  courseId     String
+  title        String
+  description  String
+  dueDate      DateTime
+  maxScore     Decimal
+  weight       Decimal  @default(1.0)
+  instructions String?
+  attachments  String[] @default([])
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  course       Course   @relation(fields: [courseId], references: [id])
+
+  @@schema("edu_matrix_hub_schema")
+}
+
+model Examination {
+  id           String       @id @default(uuid())
+  courseId     String
+  title        String
+  description  String?
+  examDate     DateTime
+  duration     Int
+  maxScore     Decimal
+  weight       Decimal      @default(1.0)
+  instructions String?
+  isActive     Boolean      @default(true)
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  results      ExamResult[]
+  course       Course       @relation(fields: [courseId], references: [id])
+
+  @@schema("edu_matrix_hub_schema")
+}
+
+model ExamResult {
+  id            String      @id @default(uuid())
+  examinationId String
+  studentId     String
+  score         Decimal
+  answers       Json?       @default("{}")
+  startedAt     DateTime
+  submittedAt   DateTime?
+  gradedAt      DateTime?
+  feedback      String?
+  examination   Examination @relation(fields: [examinationId], references: [id])
+  student       Student     @relation(fields: [studentId], references: [id])
+
+  @@unique([examinationId, studentId])
+  @@schema("edu_matrix_hub_schema")
+}
+
+model Schedule {
+  id        String   @id @default(uuid())
+  courseId  String
+  dayOfWeek Int
+  startTime String
+  endTime   String
+  room      String?
+  building  String?
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  course    Course   @relation(fields: [courseId], references: [id])
+
+  @@schema("edu_matrix_hub_schema")
+}
+
+model Payment {
+  id            String    @id @default(uuid())
+  studentId     String
+  amount        Decimal
+  currency      String    @default("USD")
+  type          String
+  description   String?
+  status        String    @default("PENDING")
+  paymentMethod String?
+  transactionId String?
+  dueDate       DateTime?
+  paidAt        DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  student       Student   @relation(fields: [studentId], references: [id])
+
+  @@schema("edu_matrix_hub_schema")
+}
+
+model ScholarshipAward {
+  id         String   @id @default(uuid())
+  studentId  String
+  name       String
+  amount     Decimal
+  currency   String   @default("USD")
+  type       String
+  startDate  DateTime
+  endDate    DateTime
+  status     String   @default("ACTIVE")
+  conditions String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  student    Student  @relation(fields: [studentId], references: [id])
+
+  @@schema("edu_matrix_hub_schema")
+}
+
+model ApiKey {
+  id            String      @id @default(uuid())
+  institutionId String
+  key           String      @unique
+  name          String
+  description   String?
+  scopes        String[]    @default([])
+  isActive      Boolean     @default(true)
+  expiresAt     DateTime?
+  createdAt     DateTime    @default(now())
+  lastUsedAt    DateTime?
+  usageCount    Int         @default(0)
+  institution   Institution @relation(fields: [institutionId], references: [id])
+
+  @@schema("edu_matrix_hub_schema")
+}
+
+model Webhook {
+  id            String      @id @default(uuid())
+  institutionId String
+  name          String
+  url           String
+  events        String[]    @default([])
+  isActive      Boolean     @default(true)
+  secret        String
+  headers       Json?       @default("{}")
+  retryCount    Int         @default(3)
+  timeout       Int         @default(30)
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  lastTriggered DateTime?
+  institution   Institution @relation(fields: [institutionId], references: [id])
+
+  @@schema("edu_matrix_hub_schema")
+}
+
+model ModuleIntegration {
+  id            String      @id @default(uuid())
+  institutionId String
+  moduleName    String
+  isEnabled     Boolean     @default(false)
+  configuration Json        @default("{}")
+  permissions   String[]    @default([])
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  institution   Institution @relation(fields: [institutionId], references: [id])
+
+  @@unique([institutionId, moduleName])
+  @@schema("edu_matrix_hub_schema")
+}
+
+model TenantSchema {
+  id            String            @id @default(uuid())
+  institutionId String            @unique
+  schemaName    String            @unique
+  status        SchemaStatus      @default(ACTIVE)
+  configuration Json              @default("{}")
+  version       Int               @default(1)
+  tableCount    Int               @default(0)
+  storageUsed   BigInt            @default(0)
+  quotaLimit    BigInt
+  lastOptimized DateTime?
+  lastBackup    DateTime?
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+  operations    SchemaOperation[]
+  institution   Institution       @relation(fields: [institutionId], references: [id])
+
+  @@schema("edu_matrix_hub_schema")
+}
+
+model SchemaOperation {
+  id          String          @id @default(uuid())
+  schemaId    String
+  type        OperationType
+  status      OperationStatus @default(PENDING)
+  description String
+  metadata    Json?           @default("{}")
+  error       String?
+  startedAt   DateTime?
+  completedAt DateTime?
+  duration    Int?
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+  schema      TenantSchema    @relation(fields: [schemaId], references: [id])
+
+  @@schema("edu_matrix_hub_schema")
+}
+
+model InstitutionalAnalytics {
+  id             String      @id @default(uuid())
+  institutionId  String
+  date           DateTime    @db.Date
+  totalStudents  Int         @default(0)
+  totalStaff     Int         @default(0)
+  totalCourses   Int         @default(0)
+  totalPrograms  Int         @default(0)
+  activeUsers    Int         @default(0)
+  storageUsed    BigInt      @default(0)
+  apiCalls       Int         @default(0)
+  averageGpa     Decimal?
+  attendanceRate Decimal?
+  completionRate Decimal?
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+  institution    Institution @relation(fields: [institutionId], references: [id])
+
+  @@unique([institutionId, date])
+  @@schema("edu_matrix_hub_schema")
+}
+
+model DepartmentAnalytics {
+  id             String     @id @default(uuid())
+  departmentId   String
+  date           DateTime   @db.Date
+  totalStudents  Int        @default(0)
+  totalStaff     Int        @default(0)
+  totalCourses   Int        @default(0)
+  averageGpa     Decimal?
+  attendanceRate Decimal?
+  completionRate Decimal?
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+  department     Department @relation(fields: [departmentId], references: [id])
+
+  @@unique([departmentId, date])
+  @@schema("edu_matrix_hub_schema")
+}
+
+enum AuthAttemptStatus {
+  SUCCESS
+  FAILED
+  BLOCKED
+
+  @@schema("auth_schema")
+}
+
+enum UserProfession {
+  TEACHER
+  PROFESSOR
+  PRINCIPAL
+  STUDENT
+  RESEARCHER
+  ACADEMIC_ADMIN
+  TUTOR
+  DOCTOR
+  NURSE
+  PHARMACIST
+  DENTIST
+  THERAPIST
+  MEDICAL_TECHNICIAN
+  HEALTHCARE_ADMIN
+  SOFTWARE_ENGINEER
+  DATA_SCIENTIST
+  SYSTEM_ADMIN
+  WEB_DEVELOPER
+  MOBILE_DEVELOPER
+  DEVOPS_ENGINEER
+  CYBERSECURITY_EXPERT
+  NETWORK_ENGINEER
+  BUSINESS_ANALYST
+  PROJECT_MANAGER
+  ACCOUNTANT
+  FINANCIAL_ADVISOR
+  MARKETING_SPECIALIST
+  SALES_REPRESENTATIVE
+  HR_SPECIALIST
+  ENTREPRENEUR
+  LAWYER
+  JUDGE
+  PARALEGAL
+  GOVERNMENT_OFFICER
+  POLICY_ANALYST
+  GRAPHIC_DESIGNER
+  CONTENT_WRITER
+  PHOTOGRAPHER
+  VIDEO_EDITOR
+  ARTIST
+  MUSICIAN
+  ELECTRICIAN
+  PLUMBER
+  CARPENTER
+  MECHANIC
+  CHEF
+  FARMER
+  CONSTRUCTION_WORKER
+  CONSULTANT
+  FREELANCER
+  RETIRED
+  UNEMPLOYED
+  OTHER
+
+  @@schema("auth_schema")
+}
+
+enum ProfileVisibility {
+  PUBLIC
+  PRIVATE
+  CONNECTIONS_ONLY
+
+  @@schema("auth_schema")
+}
+
+enum AccessLevel {
+  BASIC
+  PREMIUM
+  PROFESSIONAL
+  ENTERPRISE
+  ADMIN
+  RESTRICTED
+
+  @@schema("auth_schema")
+}
+
+enum DataScopeType {
+  SELF
+  CLASS
+  DEPARTMENT
+  INSTITUTION
+  PLATFORM
+  MULTI_INSTITUTION
+  RESTRICTED
+
+  @@schema("auth_schema")
+}
+
+enum InstitutionRoleType {
+  ADMIN
+  MANAGER
+  STAFF
+  MEMBER
+  GUEST
+
+  @@schema("auth_schema")
+}
+
+enum DepartmentRoleType {
+  HEAD
+  COORDINATOR
+  STAFF
+  MEMBER
+
+  @@schema("auth_schema")
+}
+
+enum ClassRoleType {
+  TEACHER
+  ASSISTANT
+  STUDENT
+  OBSERVER
+
+  @@schema("auth_schema")
+}
+
+enum StudentEnrollmentStatus {
+  ACTIVE
+  SUSPENDED
+  WITHDRAWN
+  COMPLETED
+  FAILED
+  DROPPED
+  PENDING
+
+  @@schema("auth_schema")
+}
+
+enum SocialPostVisibility {
+  PUBLIC
+  PRIVATE
+  FRIENDS
+  FOLLOWERS
+  LISTED
+
+  @@schema("social_schema")
+}
+
+enum SocialPostStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+  DELETED
+  SCHEDULED
+
+  @@schema("social_schema")
+}
+
+enum SocialPostType {
+  GENERAL
+  STUDY_HELP
+  PROJECT_SHARE
+  ACHIEVEMENT
+  EVENT_SHARE
+  RESOURCE_SHARE
+  GROUP_DISCUSSION
+  CAREER_ADVICE
+  TIPS_TRICKS
+  MOTIVATION
+
+  @@schema("social_schema")
+}
+
+enum GroupType {
+  PUBLIC
+  PRIVATE
+  SECRET
+
+  @@schema("social_schema")
+}
+
+enum GroupPrivacy {
+  PUBLIC
+  PRIVATE
+  SECRET
+
+  @@schema("social_schema")
+}
+
+enum GroupVisibility {
+  VISIBLE
+  HIDDEN
+
+  @@schema("social_schema")
+}
+
+enum GroupCategory {
+  EDUCATION
+  STUDY_GROUPS
+  ACADEMIC_SUBJECTS
+  INSTITUTIONS
+  CAREER_DEVELOPMENT
+  HOBBIES
+  SPORTS
+  TECHNOLOGY
+  ARTS_CULTURE
+  SOCIAL_CAUSES
+  LOCAL_COMMUNITY
+  PROFESSIONAL
+  ENTERTAINMENT
+  HEALTH_WELLNESS
+  OTHER
+
+  @@schema("social_schema")
+}
+
+enum GroupMemberRole {
+  ADMIN
+  MODERATOR
+  MEMBER
+
+  @@schema("social_schema")
+}
+
+enum GroupPostType {
+  GENERAL
+  ANNOUNCEMENT
+  QUESTION
+  DISCUSSION
+  EVENT
+  POLL
+  RESOURCE_SHARE
+  ACHIEVEMENT
+  WELCOME
+
+  @@schema("social_schema")
+}
+
+enum JoinRequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  CANCELLED
+
+  @@schema("social_schema")
+}
+
+enum InvitationStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+  EXPIRED
+  CANCELLED
+
+  @@schema("social_schema")
+}
+
+enum AcademicLevel {
+  HIGH_SCHOOL
+  UNDERGRADUATE
+  GRADUATE
+  DOCTORATE
+  PROFESSIONAL
+  CONTINUING_EDUCATION
+
+  @@schema("social_schema")
+}
+
+enum FollowStatus {
+  PENDING
+  ACCEPTED
+  BLOCKED
+
+  @@schema("social_schema")
+}
+
+enum CourseCategory {
+  TECHNOLOGY
+  BUSINESS
+  DESIGN
+  MARKETING
+  DEVELOPMENT
+  DATA_SCIENCE
+  PHOTOGRAPHY
+  MUSIC
+  HEALTH
+  FITNESS
+  LANGUAGE
+  ACADEMIC
+  TEST_PREP
+  PERSONAL_DEVELOPMENT
+
+  @@schema("courses_schema")
+}
+
+enum CourseLevel {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+  ALL_LEVELS
+
+  @@schema("courses_schema")
+}
+
+enum EnrollmentStatus {
+  ACTIVE
+  COMPLETED
+  DROPPED
+  SUSPENDED
+  REFUNDED
+
+  @@schema("courses_schema")
+}
+
+enum ProgressStatus {
+  NOT_STARTED
+  IN_PROGRESS
+  COMPLETED
+  SKIPPED
+
+  @@schema("courses_schema")
+}
+
+enum AssignmentType {
+  WRITTEN
+  PROJECT
+  PRESENTATION
+  CODE
+  DESIGN
+  VIDEO
+  PEER_REVIEW
+
+  @@schema("courses_schema")
+}
+
+enum SubmissionStatus {
+  SUBMITTED
+  GRADED
+  RETURNED
+  LATE
+  MISSING
+
+  @@schema("courses_schema")
+}
+
+enum DiscussionCategory {
+  GENERAL
+  QUESTIONS
+  ANNOUNCEMENTS
+  TECHNICAL_HELP
+  ASSIGNMENTS
+  PROJECTS
+  FEEDBACK
+
+  @@schema("courses_schema")
+}
+
+enum MaterialType {
+  PDF
+  VIDEO
+  AUDIO
+  PRESENTATION
+  SPREADSHEET
+  CODE
+  DATASET
+  TEMPLATE
+  REFERENCE
+
+  @@schema("courses_schema")
+}
+
+enum JobPostVisibility {
+  PUBLIC
+  PRIVATE
+  FRIENDS
+  FOLLOWERS
+  LISTED
+
+  @@schema("jobs_schema")
+}
+
+enum JobCategory {
+  PRIVATE
+  GOVERNMENT
+
+  @@schema("jobs_schema")
+}
+
+enum JobType {
+  FULL_TIME
+  PART_TIME
+  CONTRACT
+  FREELANCE
+  INTERNSHIP
+  TEMPORARY
+
+  @@schema("jobs_schema")
+}
+
+enum JobStatus {
+  ACTIVE
+  PAUSED
+  FILLED
+  EXPIRED
+  ARCHIVED
+
+  @@schema("jobs_schema")
+}
+
+enum ApplicationStatus {
+  PENDING
+  REVIEWING
+  SHORTLISTED
+  INTERVIEWED
+  OFFERED
+  HIRED
+  REJECTED
+  WITHDRAWN
+
+  @@schema("jobs_schema")
+}
+
+enum FreelanceCategory {
+  HYBRID
+  ONLINE
+  REMOTE
+
+  @@schema("freelancing_schema")
+}
+
+enum PaymentType {
+  FIXED
+  HOURLY
+  MILESTONE
+
+  @@schema("freelancing_schema")
+}
+
+enum ProjectComplexity {
+  SIMPLE
+  STANDARD
+  COMPLEX
+  EXPERT
+
+  @@schema("freelancing_schema")
+}
+
+enum ProjectStatus {
+  OPEN
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+  ON_HOLD
+
+  @@schema("freelancing_schema")
+}
+
+enum ProposalStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+  WITHDRAWN
+  SHORTLISTED
+
+  @@schema("freelancing_schema")
+}
+
+enum FreelancingPostVisibility {
+  PUBLIC
+  PRIVATE
+  FRIENDS
+  FOLLOWERS
+  LISTED
+
+  @@schema("freelancing_schema")
+}
+
+enum RatingContext {
+  COURSE_COMPLETION
+  SEMESTER_END
+  PROJECT_COMPLETION
+  GRADUATION
+  INTERNSHIP_COMPLETION
+  JOB_COMPLETION
+  FREELANCE_PROJECT
+  PEER_COLLABORATION
+  MENTORSHIP
+  RESEARCH_COLLABORATION
+  ENROLLMENT_EXPERIENCE
+  FACILITY_USAGE
+  SUPPORT_SERVICE
+
+  @@schema("rating_schema")
+}
+
+enum RatingEntityType {
+  USER
+  INSTITUTION
+  COURSE
+  PROJECT
+  DEPARTMENT
+  PROGRAM
+  SERVICE
+
+  @@schema("rating_schema")
+}
+
+enum RatingCategory {
+  ACADEMIC_PERFORMANCE
+  TEACHING_EFFECTIVENESS
+  COURSE_CONTENT_QUALITY
+  RESEARCH_QUALITY
+  PUBLICATION_IMPACT
+  COMMUNICATION_SKILLS
+  TEAMWORK_COLLABORATION
+  MENTORSHIP_QUALITY
+  RESPONSIVENESS
+  PROFESSIONALISM
+  INFRASTRUCTURE_QUALITY
+  SUPPORT_SERVICES
+  CAREER_OPPORTUNITIES
+  OVERALL_SATISFACTION
+  ACADEMIC_REPUTATION
+  PROJECT_QUALITY
+  TIMELINESS
+  INNOVATION
+  PROBLEM_SOLVING
+  TECHNICAL_SKILLS
+  PARTICIPATION_ENGAGEMENT
+  LEADERSHIP
+  INITIATIVE
+  ADAPTABILITY
+  RELIABILITY
+
+  @@schema("rating_schema")
+}
+
+enum RatingVisibility {
+  PUBLIC
+  PRIVATE
+  INSTITUTIONAL
+  PEERS_ONLY
+  ANONYMOUS
+
+  @@schema("rating_schema")
+}
+
+enum RatingStatus {
+  ACTIVE
+  DISPUTED
+  MODERATED
+  ARCHIVED
+  PENDING
+
+  @@schema("rating_schema")
+}
+
+enum NewsType {
+  EDUCATIONAL
+  INSTITUTIONAL
+  ACADEMIC
+  RESEARCH
+  EVENTS
+  ANNOUNCEMENTS
+  ACHIEVEMENTS
+  POLICY_UPDATES
+  TECHNOLOGY
+  INDUSTRY
+
+  @@schema("news_schema")
+}
+
+enum NewsCategory {
+  GENERAL
+  ADMISSIONS
+  EXAMINATIONS
+  SCHOLARSHIPS
+  COURSES
+  FACULTY
+  STUDENT_LIFE
+  RESEARCH
+  TECHNOLOGY
+  SPORTS
+  CULTURAL
+  ALUMNI
+  CAREER
+  INTERNSHIPS
+
+  @@schema("news_schema")
+}
+
+enum NewsPostStatus {
+  DRAFT
+  PUBLISHED
+  SCHEDULED
+  ARCHIVED
+  DELETED
+
+  @@schema("news_schema")
+}
+
+enum NewsPostVisibility {
+  PUBLIC
+  INSTITUTION_ONLY
+  STUDENTS_ONLY
+  FACULTY_ONLY
+  PRIVATE
+
+  @@schema("news_schema")
+}
+
+enum NewsPriority {
+  LOW
+  NORMAL
+  HIGH
+  URGENT
+  BREAKING
+
+  @@schema("news_schema")
+}
+
+enum ChatGroupType {
+  STUDY
+  HOMEWORK_HELP
+  EXAM_PREP
+  PROJECT_COLLABORATION
+  LANGUAGE_EXCHANGE
+  CAREER_DISCUSSION
+  CASUAL_CHAT
+  DEBATE
+  BOOK_CLUB
+  CODING
+  RESEARCH
+  NETWORKING
+
+  @@schema("community_schema")
+}
+
+enum ChatMemberRole {
+  MEMBER
+  MODERATOR
+  ADMIN
+  CREATOR
+
+  @@schema("community_schema")
+}
+
+enum ChatMessageType {
+  TEXT
+  IMAGE
+  FILE
+  VOICE_NOTE
+  VIDEO
+  LOCATION
+  SYSTEM
+  POLL
+  LINK
+
+  @@schema("community_schema")
+}
+
+enum CallType {
+  VOICE
+  VIDEO
+  SCREEN_SHARE
+
+  @@schema("community_schema")
+}
+
+enum InterestCategory {
+  ACADEMIC
+  PROGRAMMING
+  LANGUAGE
+  HOBBY
+  CAREER
+  SPORTS
+  ARTS
+  MUSIC
+  SCIENCE
+  TECHNOLOGY
+  BUSINESS
+  OTHER
+
+  @@schema("community_schema")
+}
+
+enum SkillLevel {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+  EXPERT
+
+  @@schema("community_schema")
+}
+
+enum AvailabilityType {
+  CHAT
+  VOICE_CALL
+  VIDEO_CALL
+  SCREEN_SHARE
+
+  @@schema("community_schema")
+}
+
+enum MatchType {
+  INTEREST_BASED
+  SKILL_BASED
+  LOCATION_BASED
+  RANDOM
+  STUDY_BUDDY
+
+  @@schema("community_schema")
+}
+
+enum MatchStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+  EXPIRED
+  BLOCKED
+
+  @@schema("community_schema")
+}
+
+enum MessageType {
+  TEXT
+  IMAGE
+  VIDEO
+  AUDIO
+  FILE
+  LOCATION
+  CONTACT
+  STICKER
+  EMOJI_REACTION
+  VOICE_NOTE
+  SYSTEM_MESSAGE
+  STORY_REPLY
+
+  @@schema("messages_schema")
+}
+
+enum MessageStatus {
+  SENT
+  DELIVERED
+  READ
+  FAILED
+  DELETED
+
+  @@schema("messages_schema")
+}
+
+enum ConversationType {
+  DIRECT
+  GROUP
+  BROADCAST
+  ARCHIVED
+
+  @@schema("messages_schema")
+}
+
+enum MessagePriority {
+  LOW
+  NORMAL
+  HIGH
+  URGENT
+
+  @@schema("messages_schema")
+}
+
+enum FeedbackType {
+  GENERAL_FEEDBACK
+  BUG_REPORT
+  FEATURE_REQUEST
+  COURSE_REVIEW
+  INSTRUCTOR_REVIEW
+  PLATFORM_REVIEW
+  SERVICE_FEEDBACK
+  SUGGESTION
+  COMPLAINT
+  TESTIMONIAL
+
+  @@schema("feedback_schema")
+}
+
+enum FeedbackStatus {
+  PENDING
+  UNDER_REVIEW
+  IN_PROGRESS
+  RESOLVED
+  CLOSED
+  REJECTED
+
+  @@schema("feedback_schema")
+}
+
+enum FeedbackPriority {
+  LOW
+  NORMAL
+  HIGH
+  URGENT
+  CRITICAL
+
+  @@schema("feedback_schema")
+}
+
+enum FeedbackCategory {
+  USER_EXPERIENCE
+  TECHNICAL_ISSUE
+  CONTENT_QUALITY
+  PERFORMANCE
+  SECURITY
+  ACCESSIBILITY
+  MOBILE_APP
+  WEB_PLATFORM
+  PAYMENT
+  SUPPORT
+  FEATURE
+  OTHER
+
+  @@schema("feedback_schema")
+}
+
+enum SentimentScore {
+  VERY_NEGATIVE
+  NEGATIVE
+  NEUTRAL
+  POSITIVE
+  VERY_POSITIVE
+
+  @@schema("feedback_schema")
+}
+
+enum ResponseType {
+  COMMENT
+  SOLUTION
+  UPDATE
+  CLARIFICATION
+  ESCALATION
+  CLOSURE
+
+  @@schema("feedback_schema")
+}
+
+enum VoteType {
+  HELPFUL
+  UNHELPFUL
+  SPAM
+  INAPPROPRIATE
+
+  @@schema("feedback_schema")
+}
+
+enum ReviewTargetType {
+  COURSE
+  INSTRUCTOR
+  PLATFORM
+  FREELANCER
+  JOB_POSTER
+  CONTENT
+  FEATURE
+  SERVICE
+
+  @@schema("feedback_schema")
+}
+
+enum ReviewCategory {
+  GENERAL
+  QUALITY
+  VALUE_FOR_MONEY
+  USER_EXPERIENCE
+  CUSTOMER_SERVICE
+  TECHNICAL_PERFORMANCE
+  CONTENT_ACCURACY
+  INSTRUCTOR_EFFECTIVENESS
+
+  @@schema("feedback_schema")
+}
+
+enum ReportReason {
+  SPAM
+  INAPPROPRIATE_CONTENT
+  HARASSMENT
+  FALSE_INFORMATION
+  COPYRIGHT_VIOLATION
+  FAKE_REVIEW
+  OFFENSIVE_LANGUAGE
+  OTHER
+
+  @@schema("feedback_schema")
+}
+
+enum ReportStatus {
+  PENDING
+  UNDER_REVIEW
+  RESOLVED
+  DISMISSED
+
+  @@schema("feedback_schema")
+}
+
+enum SurveyType {
+  FEEDBACK
+  SATISFACTION
+  FEATURE_REQUEST
+  USER_RESEARCH
+  MARKET_RESEARCH
+  ACADEMIC_SURVEY
+
+  @@schema("feedback_schema")
+}
+
+enum NotificationType {
+  SYSTEM_ALERT
+  COURSE_UPDATE
+  ASSIGNMENT_DUE
+  GRADE_POSTED
+  ENROLLMENT_CONFIRMED
+  CERTIFICATE_ISSUED
+  ACHIEVEMENT_UNLOCKED
+  POST_LIKED
+  POST_COMMENTED
+  POST_SHARED
+  COMMENT_LIKED
+  COMMENT_REPLIED
+  STORY_VIEWED
+  STORY_LIKED
+  STORY_COMMENTED
+  STORY_REPLY
+  FOLLOW_REQUEST
+  USER_FOLLOWED
+  CONNECTION_REQUEST
+  MESSAGE_RECEIVED
+  MESSAGE_READ
+  MENTION_IN_POST
+  MENTION_IN_COMMENT
+  TAG_IN_POST
+  FEEDBACK_RESPONSE
+  JOB_APPLICATION
+  FREELANCE_PROPOSAL
+  NEWS_PUBLISHED
+  EVENT_REMINDER
+  PAYMENT_RECEIVED
+  PAYMENT_PENDING
+  SUBSCRIPTION_EXPIRING
+  PROFILE_LIKED
+  PROFILE_SHARED
+
+  @@schema("notifications_schema")
+}
+
+enum NotificationCategory {
+  EDUCATIONAL
+  SOCIAL
+  FINANCIAL
+  ADMINISTRATIVE
+  TECHNICAL
+  MARKETING
+  SECURITY
+  ACHIEVEMENT
+
+  @@schema("notifications_schema")
+}
+
+enum NotificationPriority {
+  LOW
+  NORMAL
+  HIGH
+  URGENT
+  CRITICAL
+
+  @@schema("notifications_schema")
+}
+
+enum NotificationChannel {
+  IN_APP
+  EMAIL
+  SMS
+  PUSH
+  WEBHOOK
+
+  @@schema("notifications_schema")
+}
+
+enum NotificationStatus {
+  PENDING
+  SENT
+  DELIVERED
+  READ
+  DISMISSED
+  FAILED
+
+  @@schema("notifications_schema")
+}
+
+enum DeliveryStatus {
+  PENDING
+  PROCESSING
+  DELIVERED
+  FAILED
+  BOUNCED
+  BLOCKED
+
+  @@schema("notifications_schema")
+}
+
+enum DigestFrequency {
+  IMMEDIATE
+  HOURLY
+  DAILY
+  WEEKLY
+  NEVER
+
+  @@schema("notifications_schema")
+}
+
+enum InteractionType {
+  VIEWED
+  CLICKED
+  DISMISSED
+  SNOOZED
+  SHARED
+  REPORTED
+
+  @@schema("notifications_schema")
+}
+
+enum InstitutionType {
+  UNIVERSITY
+  COLLEGE
+  SCHOOL
+  ACADEMY
+  TRAINING_CENTER
+
+  @@schema("edu_matrix_hub_schema")
+}
+
+enum InstitutionStatus {
+  ACTIVE
+  SUSPENDED
+  INACTIVE
+  PENDING
+  ARCHIVED
+
+  @@schema("edu_matrix_hub_schema")
+}
+
+enum InstitutionApplicationStatus {
+  PENDING
+  UNDER_REVIEW
+  ACCEPTED
+  REJECTED
+  WITHDRAWN
+
+  @@schema("edu_matrix_hub_schema")
+}
+
+enum DashboardMetricType {
+  INSTITUTION_OVERVIEW
+  STUDENT_METRICS
+  TEACHER_METRICS
+  DEPARTMENT_METRICS
+  REAL_TIME_KPI
+  PERFORMANCE_ANALYTICS
+
+  @@schema("edu_matrix_hub_schema")
+}
+
+enum ParentAccessLevel {
+  BASIC
+  STANDARD
+  PREMIUM
+  FULL
+
+  @@schema("edu_matrix_hub_schema")
+}
+
+enum InstitutionMemberRole {
+  OWNER
+  ADMIN
+  TEACHER
+  STUDENT
+  STAFF
+  GUEST
+  ALUMNI
+
+  @@schema("edu_matrix_hub_schema")
+}
+
+enum InstitutionMemberStatus {
+  ACTIVE
+  SUSPENDED
+  INACTIVE
+  PENDING
+  EXPELLED
+  GRADUATED
+  TRANSFERRED
+
+  @@schema("edu_matrix_hub_schema")
+}
+
+enum DepartmentStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+  REORGANIZING
+
+  @@schema("edu_matrix_hub_schema")
+}
+
+enum EventType {
+  ACADEMIC
+  WORKSHOP
+  SEMINAR
+  MEETING
+  STUDY_SESSION
+  PRESENTATION
+  SOCIAL
+
+  @@schema("edu_matrix_hub_schema")
+}
+
+enum EventAttendanceStatus {
+  INTERESTED
+  GOING
+  MAYBE
+  NOT_GOING
+  ATTENDED
+  NO_SHOW
+
+  @@schema("edu_matrix_hub_schema")
+}
+
+enum AttendanceStatus {
+  PRESENT
+  ABSENT
+  LATE
+  EXCUSED
+  PARTIAL
+
+  @@schema("edu_matrix_hub_schema")
+}
+
+enum StaffRole {
+  ADMIN
+  TEACHER
+  COORDINATOR
+  LIBRARIAN
+  STAFF
+
+  @@schema("edu_matrix_hub_schema")
+}
+
+enum StaffStatus {
+  ACTIVE
+  ON_LEAVE
+  INACTIVE
+  TERMINATED
+
+  @@schema("edu_matrix_hub_schema")
+}
+
+enum StudentStatus {
+  ACTIVE
+  INACTIVE
+  GRADUATED
+  SUSPENDED
+  WITHDRAWN
+
+  @@schema("edu_matrix_hub_schema")
+}
+
+enum ProgramType {
+  UNDERGRADUATE
+  GRADUATE
+  DIPLOMA
+  CERTIFICATE
+  PROFESSIONAL
+
+  @@schema("edu_matrix_hub_schema")
+}
+
+enum SubscriptionTier {
+  BASIC
+  STANDARD
+  PREMIUM
+  ENTERPRISE
+
+  @@schema("edu_matrix_hub_schema")
+}
+
+enum SchemaStatus {
+  ACTIVE
+  INACTIVE
+  MAINTENANCE
+  MIGRATING
+
+  @@schema("edu_matrix_hub_schema")
+}
+
+enum OperationType {
+  CREATE
+  UPDATE
+  DELETE
+  BACKUP
+  RESTORE
+  MIGRATE
+
+  @@schema("edu_matrix_hub_schema")
+}
+
+enum OperationStatus {
+  PENDING
+  RUNNING
+  COMPLETED
+  FAILED
+  CANCELLED
+
+  @@schema("edu_matrix_hub_schema")
+}
+
+enum GradeType {
+  QUIZ
+  ASSIGNMENT
+  EXAM
+  PROJECT
+  PARTICIPATION
+  FINAL
+
+  @@schema("edu_matrix_hub_schema")
+}
+
+enum CalendarEventType {
+  ACADEMIC_DEADLINE
+  EXAM_SCHEDULE
+  HOLIDAY
+  MEETING
+  WORKSHOP
+  CONFERENCE
+  ASSIGNMENT_DUE
+  COURSE_START
+  COURSE_END
+  GRADUATION
+  ORIENTATION
+
+  @@schema("edu_matrix_hub_schema")
+}
+
+enum EventPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+
+  @@schema("edu_matrix_hub_schema")
+}
+
+enum ParentRelationType {
+  BIOLOGICAL_PARENT
+  ADOPTIVE_PARENT
+  LEGAL_GUARDIAN
+  STEP_PARENT
+  FOSTER_PARENT
+  GRANDPARENT
+  OTHER_FAMILY
+  AUTHORIZED_REPRESENTATIVE
+
+  @@schema("edu_matrix_hub_schema")
+}
+
+enum GradeTrend {
+  IMPROVING
+  DECLINING
+  STABLE
+  FLUCTUATING
+
+  @@schema("edu_matrix_hub_schema")
+}
+
+enum AcademicRiskLevel {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+
+  @@schema("edu_matrix_hub_schema")
+}
+
+enum InsightTargetType {
+  STUDENT
+  TEACHER
+  PROFESSOR
+  DEPARTMENT
+  INSTITUTION
+  COURSE
+  PROGRAM
+
+  @@schema("edu_matrix_hub_schema")
+}
+
+enum InsightType {
+  PERFORMANCE_TREND
+  ATTENDANCE_PATTERN
+  ENGAGEMENT_ANALYSIS
+  RISK_ASSESSMENT
+  IMPROVEMENT_OPPORTUNITY
+  ACHIEVEMENT_RECOGNITION
+  RESOURCE_OPTIMIZATION
+  PREDICTIVE_ANALYTICS
+
+  @@schema("edu_matrix_hub_schema")
+}
+
+enum InsightPriority {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+
+  @@schema("edu_matrix_hub_schema")
+}
+
+enum InsightStatus {
+  ACTIVE
+  ACKNOWLEDGED
+  DISMISSED
+  EXPIRED
+  ARCHIVED
+
+  @@schema("edu_matrix_hub_schema")
+}
+
+enum HealthStatus {
+  HEALTHY
+  WARNING
+  CRITICAL
+  DOWN
+  MAINTENANCE
+
+  @@schema("edu_matrix_hub_schema")
+}
+
+enum AlertLevel {
+  INFO
+  WARNING
+  ERROR
+  CRITICAL
+
+  @@schema("edu_matrix_hub_schema")
+}
+
+enum DashboardChatType {
+  INSTITUTION_WIDE
+  DEPARTMENT_CHAT
+  CLASS_CHAT
+  TEACHER_LOUNGE
+  STUDENT_COUNCIL
+  ADMIN_CHAT
+  PARENT_TEACHER
+  PROJECT_TEAM
+  STUDY_GROUP
+
+  @@schema("edu_matrix_hub_schema")
+}
+
+enum ChatLevel {
+  INSTITUTION
+  DEPARTMENT
+  CLASS
+  PROJECT
+  STUDY_GROUP
+
+  @@schema("edu_matrix_hub_schema")
+}
+
+// Production-ready file upload tracking model
+model FileUpload {
+  id          String   @id @default(uuid())
+  userId      String
+  fileName    String
+  originalName String
+  fileUrl     String
+  fileSize    Int
+  mimeType    String
+  uploadType  UploadType
+  imagekitId  String?  // ImageKit file ID for management
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Relations
+  user        User     @relation("UserFileUploads", fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([userId])
+  @@index([uploadType])
+  @@index([createdAt])
+  @@schema("social_schema")
+}
+
+enum UploadType {
+  PROFILE_AVATAR
+  PROFILE_COVER
+  POST_IMAGE
+  MESSAGE_IMAGE
+  DOCUMENT
+  
+  @@schema("social_schema")
+}

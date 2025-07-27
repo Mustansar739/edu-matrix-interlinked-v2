@@ -1,0 +1,57 @@
+{
+	"servers": {
+		"filesystem": {
+			"type": "stdio",
+			"command": "pnpm",
+			"args": [
+				"dlx",
+				"@modelcontextprotocol/server-filesystem",
+				"/mnt/div-disk/edu-matrix-interlinked"
+			],
+			"env": {
+				"MCP_FILESYSTEM_ALLOWED_DIRECTORIES": "/mnt/div-disk/edu-matrix-interlinked"
+			}
+		},
+		"postgres": {
+			"type": "stdio",
+			"command": "pnpm",
+			"args": [
+				"dlx",
+				"@modelcontextprotocol/server-postgres",
+				"postgresql://edu_matrix_user:7f9e2a4b8c1d3e5f6789012345678901abcdef1234567890abcdef12345678@localhost:5432/edu_matrix_db"
+			],
+			"env": {}
+		},
+		"puppeteer": {
+			"type": "stdio",
+			"command": "npx",
+			"args": [
+				"-y",
+				"@modelcontextprotocol/server-puppeteer"
+			],
+			"env": {
+				"PUPPETEER_LAUNCH_OPTIONS": "{\"headless\": true, \"args\": [\"--no-sandbox\", \"--disable-setuid-sandbox\", \"--disable-dev-shm-usage\"]}",
+				"ALLOW_DANGEROUS": "true"
+			}
+		},
+		"fetch": {
+			"type": "stdio",
+			"command": "pnpm",
+			"args": [
+				"dlx",
+				"@modelcontextprotocol/server-fetch"
+			],
+			"env": {}
+		},
+		"redis": {
+			"type": "stdio",
+			"command": "pnpm",
+			"args": [
+				"dlx",
+				"@modelcontextprotocol/server-redis",
+				"redis://:9a8b7c6d5e4f3210987654321fedcba0987654321fedcba0987654321fedcba@localhost:6379"
+			],
+			"env": {}
+		}
+	}
+}

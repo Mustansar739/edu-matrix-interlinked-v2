@@ -1,0 +1,362 @@
+/**
+ * =============================================================================
+ * PROFILE SUMMARY CARD STYLES - MODERN DESIGN SYSTEM
+ * =============================================================================
+ * 
+ * PURPOSE:
+ * Custom CSS styles for the redesigned ProfileSummaryCard component.
+ * Implements modern design patterns with animations, gradients, and responsive behavior.
+ * 
+ * DESIGN FEATURES:
+ * - Gradient backgrounds and overlays for visual interest
+ * - Smooth animations and transitions for better UX
+ * - Responsive design that adapts to different screen sizes
+ * - Dark mode support with proper color schemes
+ * - Accessibility-focused design with proper contrast ratios
+ * - Modern shadows and depth for visual hierarchy
+ * 
+ * ANIMATION SYSTEM:
+ * - Hover effects for interactive elements
+ * - Loading animations for skeleton states
+ * - Scale transforms for button interactions
+ * - Smooth transitions for state changes
+ * 
+ * RESPONSIVE BREAKPOINTS:
+ * - Mobile: < 640px
+ * - Tablet: 640px - 1024px  
+ * - Desktop: > 1024px
+ * 
+ * COLOR SYSTEM:
+ * - Primary: Blue gradient for main actions
+ * - Secondary: Purple accent for highlights
+ * - Success: Green for positive metrics
+ * - Warning: Yellow for attention states
+ * - Error: Red for error states
+ * 
+ * USAGE:
+ * Import this CSS file in the ProfileSummaryCard component for styling.
+ * All classes are scoped to avoid conflicts with global styles.
+ * 
+ * MAINTENANCE:
+ * Update this file when adding new visual states or animations.
+ * Test across all breakpoints when making changes.
+ * 
+ * LAST UPDATED: 2025-01-04
+ * =============================================================================
+ */
+
+/* Root CSS Variables for Consistent Design System */
+:root {
+  /* Profile Card Colors */
+  --profile-card-bg: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  --profile-card-bg-dark: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+  --profile-card-border: rgba(226, 232, 240, 0.8);
+  --profile-card-border-dark: rgba(51, 65, 85, 0.8);
+  
+  /* Gradient Overlays */
+  --gradient-primary: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+  --gradient-secondary: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
+  --gradient-success: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  --gradient-warning: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  --gradient-error: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  
+  /* Shadow System */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  
+  /* Animation Timing */
+  --transition-fast: 150ms ease-in-out;
+  --transition-normal: 250ms ease-in-out;
+  --transition-slow: 350ms ease-in-out;
+  
+  /* Spacing Scale */
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2rem;
+}
+
+/* Dark Mode Variables */
+[data-theme="dark"] {
+  --profile-card-bg: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+  --profile-card-border: rgba(51, 65, 85, 0.8);
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 10px 10px -5px rgba(0, 0, 0, 0.3);
+}
+
+/* Profile Card Container */
+.profile-summary-card {
+  position: relative;
+  overflow: hidden;
+  background: var(--profile-card-bg);
+  border: 1px solid var(--profile-card-border);
+  border-radius: 1rem;
+  box-shadow: var(--shadow-lg);
+  transition: all var(--transition-normal);
+  backdrop-filter: blur(8px);
+}
+
+.profile-summary-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-xl);
+}
+
+/* Background Pattern */
+.profile-card-pattern {
+  position: absolute;
+  inset: 0;
+  background: 
+    radial-gradient(circle at 30% 20%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 70% 80%, rgba(139, 92, 246, 0.1) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+/* Avatar Enhancements */
+.profile-avatar {
+  position: relative;
+  border: 4px solid rgba(255, 255, 255, 0.9);
+  box-shadow: var(--shadow-lg);
+  transition: all var(--transition-normal);
+}
+
+.profile-avatar:hover {
+  transform: scale(1.05);
+  box-shadow: var(--shadow-xl);
+}
+
+.profile-avatar::after {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: inherit;
+  background: var(--gradient-primary);
+  opacity: 0;
+  transition: opacity var(--transition-normal);
+  z-index: -1;
+}
+
+.profile-avatar:hover::after {
+  opacity: 0.2;
+}
+
+/* Online Status Indicator */
+.online-indicator {
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  width: 1.25rem;
+  height: 1.25rem;
+  background: #10b981;
+  border: 2px solid white;
+  border-radius: 50%;
+  box-shadow: var(--shadow-sm);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+  }
+  50% {
+    box-shadow: 0 0 0 4px rgba(16, 185, 129, 0);
+  }
+}
+
+/* Statistics Enhancements */
+.stat-item {
+  padding: var(--space-sm);
+  border-radius: 0.5rem;
+  transition: all var(--transition-fast);
+  cursor: pointer;
+}
+
+.stat-item:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.stat-item.followers:hover {
+  background: rgba(59, 130, 246, 0.1);
+}
+
+.stat-item.views:hover {
+  background: rgba(16, 185, 129, 0.1);
+}
+
+.stat-item.likes:hover {
+  background: rgba(239, 68, 68, 0.1);
+}
+
+.stat-number {
+  font-weight: 700;
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+  transition: all var(--transition-fast);
+}
+
+.stat-item:hover .stat-number {
+  transform: scale(1.1);
+}
+
+.stat-icon {
+  transition: all var(--transition-fast);
+}
+
+.stat-item:hover .stat-icon {
+  transform: scale(1.1);
+}
+
+/* Button Enhancements */
+.profile-button-primary {
+  background: var(--gradient-primary);
+  border: none;
+  color: white;
+  font-weight: 600;
+  border-radius: 0.5rem;
+  transition: all var(--transition-normal);
+  position: relative;
+  overflow: hidden;
+}
+
+.profile-button-primary::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, transparent 100%);
+  opacity: 0;
+  transition: opacity var(--transition-fast);
+}
+
+.profile-button-primary:hover::before {
+  opacity: 1;
+}
+
+.profile-button-primary:hover {
+  transform: translateY(-1px) scale(1.02);
+  box-shadow: var(--shadow-lg);
+}
+
+.profile-button-primary:active {
+  transform: translateY(0) scale(0.98);
+}
+
+/* Badge Enhancements */
+.open-to-work-badge {
+  background: var(--gradient-success);
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  transition: all var(--transition-normal);
+  position: relative;
+  overflow: hidden;
+}
+
+.open-to-work-badge::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transition: left 0.5s ease-in-out;
+}
+
+.open-to-work-badge:hover::before {
+  left: 100%;
+}
+
+/* Loading Animation Enhancements */
+.skeleton-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+
+.skeleton-shimmer::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.4),
+    transparent
+  );
+  transform: translateX(-100%);
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 640px) {
+  .profile-summary-card {
+    border-radius: 0.75rem;
+    margin: 0 -0.5rem;
+  }
+  
+  .stat-item {
+    padding: var(--space-xs);
+  }
+  
+  .stat-number {
+    font-size: 1rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .profile-summary-card:hover {
+    transform: translateY(-4px);
+  }
+  
+  .profile-avatar:hover {
+    transform: scale(1.08);
+  }
+}
+
+/* Accessibility Enhancements */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  
+  .profile-summary-card:hover {
+    transform: none;
+  }
+  
+  .profile-avatar:hover {
+    transform: none;
+  }
+  
+  .stat-item:hover .stat-number,
+  .stat-item:hover .stat-icon {
+    transform: none;
+  }
+}
+
+/* High Contrast Mode */
+@media (prefers-contrast: high) {
+  .profile-summary-card {
+    border: 2px solid;
+  }
+  
+  .stat-item:hover {
+    border: 2px solid;
+  }
+  
+  .profile-button-primary {
+    border: 2px solid;
+  }
+}
